@@ -1,4 +1,5 @@
 CCC = clang++
+STD11 = -std=c++11 
 LEX = flex
 YACC = bison
 CFLAGS = -Wall
@@ -7,19 +8,19 @@ LEXFLAGS = -Wno-unused
 OBJS = main.o ast.o parse.tab.o lex.yy.o
 
 run: $(OBJS)
-	$(CCC) $(CFLAGS) -o run $(OBJS)
+	$(CCC) $(STD11) $(CFLAGS) -o run $(OBJS)
 
 main.o: main.cpp parse.y scan.l parse.tab.cpp lex.yy.cpp
-	$(CCC) $(CFLAGS) -c main.cpp
+	$(CCC) $(STD11) $(CFLAGS) -c main.cpp
 
 parse.tab.cpp: parse.y ast.h
 	$(YACC) -oparse.tab.cpp -d parse.y
 
 ast.o: ast.cpp ast.h
-	$(CCC) $(CFLAGS) -c ast.cpp
+	$(CCC) $(STD11) $(CFLAGS) -c ast.cpp
 
 parse.tab.o: parse.tab.cpp
-	$(CCC) $(CFLAGS) -c parse.tab.cpp
+	$(CCC) $(STD11) $(CFLAGS) -c parse.tab.cpp
 
 lex.yy.cpp: scan.l parse.tab.o
 	$(LEX) -olex.yy.cpp scan.l

@@ -7,12 +7,13 @@
 %}
 
 %%
-"+" |
-"-" |
-"*" |
-"/" |
-"(" |
-")"        { return yytext[0]; }
+"+"  { return ADD; } 
+"-"  { return MINUS; } 
+"*"  { return MUL; } 
+"/"  { return DIVID; }
+"("  { return LEFT_BRACKET; }
+")"  { return RIGHT_BRACKET; }
+"**" { return EXPO; }
 [0-9]+"."[0-9]? |
 "."?[0-9]+ { yylval.d = atof(yytext); return NUMBER; }
 

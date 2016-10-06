@@ -45,8 +45,15 @@ extern int yydebug;
 # define YYTOKENTYPE
   enum yytokentype
   {
-    NUMBER = 258,
-    EOL = 259
+    ADD = 258,
+    MINUS = 259,
+    MUL = 260,
+    DIVID = 261,
+    EXPO = 262,
+    LEFT_BRACKET = 263,
+    RIGHT_BRACKET = 264,
+    NUMBER = 265,
+    EOL = 266
   };
 #endif
 
@@ -60,7 +67,7 @@ union YYSTYPE
   Ast* ast;
   double d;
 
-#line 64 "parse.tab.hpp" /* yacc.c:1909  */
+#line 71 "parse.tab.hpp" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1

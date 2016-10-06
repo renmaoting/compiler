@@ -16,15 +16,19 @@
   double d;
 }
 
+%token ADD MINUS MUL DIVID EXPO LEFT_BRACKET RIGHT_BRACKET
 %token <d> NUMBER
 %token EOL
-%type <ast> exp factor term
-
+%type <ast> exp 
+%left ADD MINUS
+%left MUL DIVID
+%left EXPO
 %%
 
 calclist 
        : calclist exp EOL {
            std::cout << "= " << eval($2) << std::endl;
+           makeGraph($2);
            treeFree($2);
            std::cout << "> ";
          }
@@ -32,18 +36,13 @@ calclist
        | // empty
        ;
 
-exp    : factor
-       | exp '+' factor { $$ = new AstNode('+', $1,$3); }
-       | exp '-' factor { $$ = new AstNode('-', $1,$3);}
-       ;
-
-factor : term
-       | factor '*' term { $$ = new AstNode('*', $1,$3); }
-       | factor '/' term { $$ = new AstNode('/', $1,$3); }
-       ;
-
-term   : NUMBER   { $$ = new AstNumber('K', $1); }
-       | '(' exp ')' { $$ = $2; }
-       | '-' term    { $$ = new AstNode('M', $2, NULL); }
+exp    : exp ADD exp { $$ = new AstNode('+', $1,$3); }
+       | exp MINUS exp { $$ = new AstNode('-', $1,$3); }
+       | exp MUL exp { $$ = new AstNode('*', $1,$3); }
+       | exp DIVID exp { $$ = new AstNode('/', $1,$3); }
+       | exp EXPO exp  { $$ = new AstNode('E', $1,$3); }
+       | LEFT_BRACKET exp RIGHT_BRACKET { $$ = $2; }
+       | MINUS exp { $$ = new AstNode('M', $2, NULL); }
+       | NUMBER   { $$ = new AstNumber('K', $1); }
        ;
 %%

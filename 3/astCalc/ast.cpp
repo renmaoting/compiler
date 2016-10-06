@@ -42,3 +42,20 @@ void treeFree(Ast *a) {
   }
 }
 
+void preOrder(Ast* node, Ast* preNode, std::ofstream& fout)
+{
+    fout << preNode->getLabel() << "->" << node->getLabel()<<"\n";      
+    if(node->getLeft()) preOrder(node->getLeft(), node, fout);
+    if(node->getRight()) preOrder(node->getRight(), node, fout);
+}
+
+void makeGraph(Ast* a)
+{
+    std::ofstream fout;
+    fout.open("graph.gv");    
+    fout << "graph {\n";
+    if(a->getLeft()) preOrder(a->getLeft(), a, fout);
+    if(a->getRight()) preOrder(a->getRight(), a, fout);
+    fout << "}\n";
+    fout.close();
+}
