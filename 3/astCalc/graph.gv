@@ -1,11 +1,17 @@
 digraph G {
-    A [label = "+"];
-    B [label = "1"];
+    A [label = "-"];
+    B [label = "+"];
     A -> B;
-    C [label = "*"];
-    A -> C;
-    D [label = "2"];
+    C [label = "-"];
+    B -> C;
+    D [label = "4"];
     C -> D;
-    E [label = "3"];
-    C -> E;
+    E [label = "*"];
+    B -> E;
+    F [label = "5"];
+    E -> F;
+    G [label = "4"];
+    E -> G;
+    H [label = "1"];
+    A -> H;
 }

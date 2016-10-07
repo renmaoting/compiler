@@ -13,6 +13,11 @@ void preOrder(Ast* node, std::ofstream& fout, char preId, int &curNode)
     if(node->getRight()) preOrder(node->getRight(), fout, 'A'+curNodeId, curNode);
 }
 
+
+void showFormat(Ast*)
+{
+
+}
 void makeGraph(Ast* a)
 {
     if(!a) return;
