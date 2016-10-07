@@ -73,7 +73,7 @@ private:
     double value;
 };
 
-void showFormat(Ast*);
+void printNodeFormat(Ast *node, char ID, std::ofstream& fout);
 void makeGraph(Ast*);
 void preOrder(Ast* node, std::ofstream& fout, char preId, int &curNode);
 

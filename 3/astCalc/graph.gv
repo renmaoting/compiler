@@ -1,17 +1,29 @@
 digraph G {
-    A [label = "-"];
-    B [label = "+"];
+    A [label = "-", style=filled, color=lightblue];
+    B [label = "+", style=filled, color=lightblue];
     A -> B;
-    C [label = "-"];
+    C [label = "-", style=filled, color=yellow, shape = box];
     B -> C;
-    D [label = "4"];
+    D [label = "17", style=filled, color=green, shape=diamond];
     C -> D;
-    E [label = "*"];
+    E [label = "*", style=filled, color=lightblue];
     B -> E;
-    F [label = "5"];
+    F [label = "2", style=filled, color=green, shape=diamond];
     E -> F;
-    G [label = "4"];
+    G [label = "+", style=filled, color=lightblue];
     E -> G;
-    H [label = "1"];
-    A -> H;
+    H [label = "3", style=filled, color=green, shape=diamond];
+    G -> H;
+    I [label = "4", style=filled, color=green, shape=diamond];
+    G -> I;
+    J [label = "/", style=filled, color=lightblue];
+    A -> J;
+    K [label = "*", style=filled, color=lightblue];
+    J -> K;
+    L [label = "2", style=filled, color=green, shape=diamond];
+    K -> L;
+    M [label = "3", style=filled, color=green, shape=diamond];
+    K -> M;
+    N [label = "4", style=filled, color=green, shape=diamond];
+    J -> N;
 }
