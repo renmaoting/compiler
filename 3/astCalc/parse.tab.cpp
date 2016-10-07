@@ -1227,9 +1227,9 @@ yyreduce:
         case 2:
 #line 29 "parse.y" /* yacc.c:1646  */
     {
-           std::cout << "= " << eval((yyvsp[-1].ast)) << std::endl;
+           std::cout << "= " << (yyvsp[-1].ast)->getVal() << std::endl;
            makeGraph((yyvsp[-1].ast));
-           treeFree((yyvsp[-1].ast));
+           if((yyvsp[-1].ast)) delete (yyvsp[-1].ast);
            std::cout << "> ";
          }
 #line 1236 "parse.tab.cpp" /* yacc.c:1646  */
@@ -1237,31 +1237,31 @@ yyreduce:
 
   case 5:
 #line 39 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('+', (yyvsp[-2].ast),(yyvsp[0].ast)); }
+    { (yyval.ast) = new AddNode((yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1242 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 40 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('-', (yyvsp[-2].ast),(yyvsp[0].ast)); }
+    { (yyval.ast) = new MinusNode((yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1248 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 7:
 #line 41 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('*', (yyvsp[-2].ast),(yyvsp[0].ast)); }
+    { (yyval.ast) = new MulNode((yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1254 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 8:
 #line 42 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('/', (yyvsp[-2].ast),(yyvsp[0].ast)); }
+    { (yyval.ast) = new DividNode((yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1260 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 43 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('E', (yyvsp[-2].ast),(yyvsp[0].ast)); }
+    { (yyval.ast) = new ExponentNode((yyvsp[-2].ast), (yyvsp[0].ast)); }
 #line 1266 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -1273,13 +1273,13 @@ yyreduce:
 
   case 11:
 #line 45 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNode('M', (yyvsp[0].ast), NULL); }
+    { (yyval.ast) = new SingleMinusNode((yyvsp[0].ast), NULL); }
 #line 1278 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 46 "parse.y" /* yacc.c:1646  */
-    { (yyval.ast) = new AstNumber('K', (yyvsp[0].d)); }
+    { (yyval.ast) = new NumberNode((yyvsp[0].d)); }
 #line 1284 "parse.tab.cpp" /* yacc.c:1646  */
     break;
 

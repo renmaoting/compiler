@@ -4,58 +4,25 @@
 #  include <stdlib.h>
 #  include "ast.h"
 
-double eval(Ast *a) {
-  double v = 0;
-  switch( a->getNodetype() ) {
-  case 'K': v = a->getNumber(); break;
-  case '+': v = eval(a->getLeft()) + eval(a->getRight()); break;
-  case '-': v = eval(a->getLeft()) - eval(a->getRight()); break;
-  case '*': v = eval(a->getLeft()) * eval(a->getRight()); break;
-  case '/': v = eval(a->getLeft()) / eval(a->getRight()); break;
-  case 'M': v = -eval(a->getLeft()); break;
-  default: std::cout << "internal error: bad node "
-                << a->getNodetype() << std::endl;;
-  }
-  return v;
-}
-
-void treeFree(Ast *a) {
-  switch(a->getNodetype()) {
-   // two subtrees
-  case '+':
-  case '-':
-  case '*':
-  case '/':
-    treeFree(a->getRight());
-
-   // one subtrees
-  case 'M':
-    treeFree(a->getLeft());
-
-   //no subtree
-  case 'K':
-    delete a;
-    break;
-
-  default: std::cout << "internal error: bad node "
-                << a->getNodetype() << std::endl;;
-  }
-}
-
-void preOrder(Ast* node, Ast* preNode, std::ofstream& fout)
+void preOrder(Ast* node, std::ofstream& fout, char preId, int &curNode)
 {
-    fout << preNode->getLabel() << "->" << node->getLabel()<<"\n";      
-    if(node->getLeft()) preOrder(node->getLeft(), node, fout);
-    if(node->getRight()) preOrder(node->getRight(), node, fout);
+    int curNodeId = ++curNode;
+    fout <<"    " << char('A'+curNodeId) << " [label = \"" << node->getLabel() << "\"];" << std::endl;
+    fout <<"    " <<  preId<< " -> " << char('A' + curNodeId) << ";" << std::endl;      
+    if(node->getLeft()) preOrder(node->getLeft(), fout, 'A'+curNodeId, curNode);
+    if(node->getRight()) preOrder(node->getRight(), fout, 'A'+curNodeId, curNode);
 }
 
 void makeGraph(Ast* a)
 {
+    if(!a) return;
     std::ofstream fout;
     fout.open("graph.gv");    
-    fout << "graph {\n";
-    if(a->getLeft()) preOrder(a->getLeft(), a, fout);
-    if(a->getRight()) preOrder(a->getRight(), a, fout);
-    fout << "}\n";
+    fout << "digraph G {" << std::endl;
+    int curNode = 0;
+    fout << "    " << "A [label = \"" << a->getLabel() << "\"];" << std::endl;
+    if(a->getLeft()) preOrder(a->getLeft(), fout, 'A', curNode);
+    if(a->getRight()) preOrder(a->getRight(), fout, 'A', curNode);
+    fout << "}" << std::endl;;
     fout.close();
 }

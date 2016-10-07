@@ -5,47 +5,74 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <math.h>
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
 
 class Ast {
 public:
-  Ast(int n, std::string label) : nodetype(n), mLabel(label) {}
-  virtual ~Ast() {}
-  char getNodetype() const { return nodetype; }
-  virtual Ast* getLeft() const { return NULL; /*throw std::string("No Left");*/ }
-  virtual Ast* getRight() const { return NULL; /*throw std::string("No Right");*/ }
-  virtual double getNumber() const { throw std::string("No Number"); }
+  Ast(std::string label, Ast* l, Ast* r) : mLabel(label), left(l), right(r) {}
+  virtual ~Ast() { if(left) delete left; if(right) delete right; }
+  virtual Ast* getLeft() const { return left; }
+  virtual Ast* getRight() const { return right; }
+  virtual double getVal() const { throw std::string("No Number"); }
+  void setLabel(std::string label) { mLabel = label; }
   std::string getLabel() { return mLabel; }
 private:
-  char nodetype;
   std::string mLabel;
-};
-
-class AstNode : public Ast {
-public:
-  AstNode(char nodetype, Ast* l, Ast* r) : 
-    Ast(nodetype, std::string(1,nodetype)), left(l), right(r) 
-  {}
-  virtual ~AstNode() {}
-  virtual Ast* getLeft() const  { return left; }
-  virtual Ast* getRight() const { return right; }
-private:
   Ast *left;
   Ast *right;
 };
 
-class AstNumber : public Ast {
+class AddNode:public Ast{
 public:
-  AstNumber(char nodetype, double n) : Ast(nodetype, std::to_string(n)), number(n) {} 
-  virtual ~AstNumber() {}
-  virtual double getNumber() const { return number; }
-private:
-  double number;
+    AddNode(Ast* l, Ast* r): Ast("+", l, r) {}
+    double getVal()const { return Ast::getLeft()->getVal() + Ast::getRight()->getVal(); }
 };
 
-double eval(Ast*);   // Evaluate an AST
+class MinusNode:public Ast{
+public:
+    MinusNode(Ast* l, Ast* r): Ast("-", l, r){}
+    double getVal()const { return Ast::getLeft()->getVal() - Ast::getRight()->getVal(); }
+};
+
+class MulNode:public Ast{
+public:
+    MulNode(Ast* l, Ast* r): Ast("*", l, r){}
+    double getVal()const { return Ast::getLeft()->getVal() * Ast::getRight()->getVal(); }
+};
+
+class DividNode:public Ast{
+public:
+    DividNode(Ast* l, Ast* r): Ast("/", l, r){}
+    double getVal()const { return Ast::getLeft()->getVal() / Ast::getRight()->getVal(); }
+};
+
+class ExponentNode:public Ast{
+public:
+    ExponentNode(Ast* l, Ast* r): Ast("**", l, r){}
+    double getVal()const { return pow(Ast::getLeft()->getVal() , Ast::getRight()->getVal()); }
+};
+
+class SingleMinusNode:public Ast{
+public:
+    SingleMinusNode(Ast* l, Ast* r): Ast("-", l, r){}
+    double getVal()const { return -Ast::getLeft()->getVal(); }
+};
+
+class NumberNode:public Ast{
+public:
+    NumberNode(double val): Ast("", NULL, NULL), value(val){
+        std::ostringstream os;
+        os << val;
+        Ast::setLabel(os.str());
+    }
+    double getVal()const { return value; }
+private:
+    double value;
+};
+
 void makeGraph(Ast*);
-void preOrder(Ast* node, Ast* preNode, std::ofstream& fout);
-void treeFree(Ast*); // delete and free an AST 
+void preOrder(Ast* node, std::ofstream& fout, char preId, int &curNode);
 

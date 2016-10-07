@@ -27,22 +27,22 @@
 
 calclist 
        : calclist exp EOL {
-           std::cout << "= " << eval($2) << std::endl;
+           std::cout << "= " << $2->getVal() << std::endl;
            makeGraph($2);
-           treeFree($2);
+           if($2) delete $2;
            std::cout << "> ";
          }
        | calclist EOL // blank line or a comment
        | // empty
        ;
 
-exp    : exp ADD exp { $$ = new AstNode('+', $1,$3); }
-       | exp MINUS exp { $$ = new AstNode('-', $1,$3); }
-       | exp MUL exp { $$ = new AstNode('*', $1,$3); }
-       | exp DIVID exp { $$ = new AstNode('/', $1,$3); }
-       | exp EXPO exp  { $$ = new AstNode('E', $1,$3); }
+exp    : exp ADD exp { $$ = new AddNode($1, $3); }
+       | exp MINUS exp { $$ = new MinusNode($1, $3); }
+       | exp MUL exp { $$ = new MulNode($1, $3); }
+       | exp DIVID exp { $$ = new DividNode($1, $3); }
+       | exp EXPO exp  { $$ = new ExponentNode($1, $3); }
        | LEFT_BRACKET exp RIGHT_BRACKET { $$ = $2; }
-       | MINUS exp { $$ = new AstNode('M', $2, NULL); }
-       | NUMBER   { $$ = new AstNumber('K', $1); }
+       | MINUS exp { $$ = new SingleMinusNode($2, NULL); }
+       | NUMBER   { $$ = new NumberNode($1); }
        ;
 %%
