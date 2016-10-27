@@ -1,0 +1,15 @@
+Name: Maoting Ren
+Clemson Email Address: mren@g.clemson.edu
+Course number: 8270
+
+Project no: 4 
+Project due date: 8 AM, Thursday, October 27 th of 2016
+
+Project description:
+Implemented all features and also write a testhelper to test all the test cases
+
+Difficulties: 
+
+Extra:
+I wrote a python script "generateCases.py" to automatically generate test cases, 
+it will create random numbers of '.py' and '.out' pairs  
