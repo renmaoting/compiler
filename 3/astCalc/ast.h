@@ -12,6 +12,7 @@ extern void yyerror(const char*, const char);
 
 class Ast {
 public:
+  Ast(): mLabel(""), left(NULL), right(NULL) {}
   Ast(std::string label, Ast* l, Ast* r) : mLabel(label), left(l), right(r) {}
   virtual ~Ast() { if(left) delete left; if(right) delete right; }
   virtual Ast* getLeft() const { return left; }

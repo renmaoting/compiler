@@ -23,8 +23,8 @@
 %left ADD MINUS
 %left MUL DIVID
 %left EXPO
-%%
 
+%%
 calclist 
        : calclist exp EOL {
            std::cout << "= " << $2->getVal() << std::endl;

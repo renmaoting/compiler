@@ -1,1 +1,1 @@
-print 12
+print -6//11

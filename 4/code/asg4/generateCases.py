@@ -4,7 +4,7 @@ import os, sys
 import random 
 
 def generateCases():
-    num = random.randint(20, 30)
+    num = random.randint(30, 40)
     for i in range(num):
         exp = str(random.randint(-15, 15))
         cnt = 1
@@ -13,7 +13,7 @@ def generateCases():
             if random.randint(0, 100) > 80 or cnt > 7:
                 break;
             op = random.randint(0, 7)
-            val = random.randint(0, 15)
+            val = random.randint(1, 15)
             if op == 0: exp += '+'
             elif op == 1: exp += '-'
             elif op == 2: exp += '*'
