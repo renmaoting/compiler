@@ -3,40 +3,53 @@
 #  include <iostream>
 #  include <stdlib.h>
 #  include "ast.h"
+#  include "symbolTable.h"
 
-void preOrder(Ast* node, std::ofstream& fout, char preId, int &curNode)
-{
-    int curNodeId = ++curNode;
-    printNodeFormat(node, 'A'+curNodeId, fout);
-    fout <<"    " <<  preId<< " -> " << char('A' + curNodeId) << ";" << std::endl;      
-    if(node->getLeft()) preOrder(node->getLeft(), fout, 'A'+curNodeId, curNode);
-    if(node->getRight()) preOrder(node->getRight(), fout, 'A'+curNodeId, curNode);
+/*
+double AddNode::getVal()const { 
+    return Ast::getLeft()->getVal() + Ast::getRight()->getVal(); 
 }
 
-void printNodeFormat(Ast *node, char ID, std::ofstream& fout)
-{
-    std::string label = node->getLabel();
-    fout << "    " << ID << " [label = \"" << label << "\", style=filled, ";
-    if(label=="-" && !node->getRight())     
-        fout << "color=yellow, shape = box];" << std::endl;
-    else if(label=="+" || label=="-" || label=="*" || label=="/" || label=="**")
-        fout << "color=lightblue];" << std::endl;
-    else if(!node->getLeft() && !node->getRight())
-        fout << "color=green, shape=diamond];" << std::endl;
-    else throw std::string("unknow node type in printNodeFormat()");
+
+double MinusNode::getVal()const {
+    return Ast::getLeft()->getVal() - Ast::getRight()->getVal(); 
 }
 
-void makeGraph(Ast* a)
-{
-    if(!a) return;
-    std::ofstream fout;
-    fout.open("graph.gv");    
-    fout << "digraph G {" << std::endl;
-    int curNode = 0;
-    printNodeFormat(a, 'A', fout);
-    if(a->getLeft()) preOrder(a->getLeft(), fout, 'A', curNode);
-    if(a->getRight()) preOrder(a->getRight(), fout, 'A', curNode);
-    fout << "}" << std::endl;;
-    fout.close();
-    system("dot -Tpng -o resultGraph.png graph.gv");
+double MulNode::getVal()const { 
+    return Ast::getLeft()->getVal() * Ast::getRight()->getVal(); 
 }
+
+double DividNode::getVal()const {
+    double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
+    if(Ast::getType()=='I') return floor(left/right); 
+    return left/right; 
+}
+
+double DoubleDividNode::getVal()const{
+    return floor(Ast::getLeft()->getVal()/Ast::getRight()->getVal()); 
+}
+
+double PercentNode::getVal()const { 
+    double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
+    return (int)(left - right*floor(left/right));
+}
+
+double ExponentNode::getVal()const { 
+    return pow(Ast::getLeft()->getVal() , Ast::getRight()->getVal()); 
+}
+
+double SingleMinusNode::getVal()const { 
+    return -Ast::getLeft()->getVal(); 
+}
+
+double SinglePlusNode::getVal()const { 
+    return Ast::getLeft()->getVal(); 
+}
+
+double NumberNode::getVal()const { 
+    return value; 
+}
+
+std::string StringNode::getStr()const{
+    return str;
+}*/

@@ -2,7 +2,8 @@
 %{
   #include <iostream>
   #include <cmath>
-  #include "ast.h"
+  #include "symbolTable.h" 
+  #include "stringNode.h" 
 	int yylex (void);
 	extern int yylineno;
 	extern char *yytext;
@@ -13,6 +14,7 @@
     Ast* ast;
     double d;
     int i;
+    char* c;
 }
 
 // 83 tokens, in alphabetical order:
@@ -22,7 +24,7 @@
 %token DOUBLESTAR DOUBLESTAREQUAL ELIF ELSE ENDMARKER EQEQUAL
 %token EQUAL EXCEPT EXEC FINALLY FOR FROM GLOBAL GREATER GREATEREQUAL GRLT
 %token IF IMPORT IN INDENT IS LAMBDA LBRACE LEFTSHIFT LEFTSHIFTEQUAL LESS
-%token LESSEQUAL LPAR LSQB MINEQUAL MINUS NAME NEWLINE NOT NOTEQUAL NUMBER
+%token LESSEQUAL LPAR LSQB MINEQUAL MINUS NAME NEWLINE NOT NOTEQUAL NUMBER FLOAT
 %token OR PASS PERCENT PERCENTEQUAL PLUS PLUSEQUAL PRINT RAISE 
 %token RBRACE RETURN RIGHTSHIFT RIGHTSHIFTEQUAL RPAR RSQB 
 %token SEMI SLASH SLASHEQUAL STAR STAREQUAL
@@ -32,9 +34,12 @@
 
 
 %type <ast> opt_test arith_expr term factor power atom opt_yield_test opt_test_2 plus_COMMA_test
-%type <ast> star_COMMA_test test or_test and_test not_test 
-%type <i> print_stmt pick_PLUS_MINUS pick_multop pick_unop PLUS SLASH PERCENT TILDE MINUS
-%type <d> NUMBER 
+%type <ast> star_COMMA_test test or_test and_test not_test comparison expr xor_expr and_expr shift_expr
+%type <ast> lambdef pick_yield_expr_testlist star_EQUAL testlist yield_expr
+%type <i> NUMBER print_stmt pick_PLUS_MINUS pick_multop pick_unop PLUS SLASH PERCENT TILDE MINUS LEFTSHIFT RIGHTSHIFT
+%type <ast> NOT AND
+%type <d> FLOAT 
+%type <c> NAME
 
 %%
 
@@ -92,7 +97,7 @@ varargslist // Used in: parameters, old_lambdef, lambdef
 	| fpdef opt_EQUAL_test star_COMMA_fpdef
 	;
 opt_EQUAL_test // Used in: varargslist, star_fpdef_COMMA, star_COMMA_fpdef
-	: EQUAL test
+	: EQUAL test 
 	| %empty
 	;
 star_fpdef_COMMA // Used in: varargslist, star_fpdef_COMMA
@@ -115,14 +120,14 @@ fplist // Used in: fpdef
 	: fpdef star_fpdef_notest
 	;
 stmt // Used in: pick_NEWLINE_stmt, plus_stmt
-	: simple_stmt
+	: simple_stmt 
 	| compound_stmt
 	;
 simple_stmt // Used in: single_input, stmt, suite
 	: small_stmt small_stmt_STAR_OR_SEMI NEWLINE
 	;
 small_stmt // Used in: simple_stmt, small_stmt_STAR_OR_SEMI
-	: expr_stmt
+	: expr_stmt 
 	| print_stmt
 	| del_stmt
 	| pass_stmt
@@ -134,15 +139,15 @@ small_stmt // Used in: simple_stmt, small_stmt_STAR_OR_SEMI
 	;
 expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist
-	| testlist star_EQUAL
+	| testlist star_EQUAL { SymbolTable::getInstance().addSymbol($1->getStr(), $2); }
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
-	: yield_expr
-	| testlist
+	: yield_expr 
+	| testlist 
 	;
 star_EQUAL // Used in: expr_stmt, star_EQUAL
-	: EQUAL pick_yield_expr_testlist star_EQUAL
-	| %empty
+	: EQUAL pick_yield_expr_testlist star_EQUAL { $$ = $2;  }
+	| %empty {}
 	;
 augassign // Used in: expr_stmt
 	: PLUSEQUAL
@@ -159,8 +164,8 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test { std::cout << std::endl; }
-	| PRINT RIGHTSHIFT test opt_test_2
+	: PRINT opt_test { std::cout << $2->getVal() << std::endl; }
+	| PRINT RIGHTSHIFT test opt_test_2 {}
 	;
 opt_test // Used in: print_stmt
 	: test star_COMMA_test 
@@ -168,7 +173,7 @@ opt_test // Used in: print_stmt
 	;
 opt_test_2 // Used in: print_stmt
 	: plus_COMMA_test 
-	| %empty
+	| %empty {}
 	;
 del_stmt // Used in: small_stmt
 	: DEL exprlist
@@ -313,8 +318,8 @@ star_COMMA_with_item // Used in: with_stmt, star_COMMA_with_item
 	| %empty
 	;
 with_item // Used in: with_stmt, star_COMMA_with_item
-	: test AS expr
-	| test
+	: test AS expr 
+	| test 
 	;
 except_clause // Used in: plus_except
 	: EXCEPT test opt_AS_COMMA
@@ -325,7 +330,7 @@ pick_AS_COMMA // Used in: opt_AS_COMMA
 	| COMMA
 	;
 opt_AS_COMMA // Used in: except_clause
-	: pick_AS_COMMA test
+	: pick_AS_COMMA test 
 	| %empty
 	;
 suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt, 
@@ -356,7 +361,7 @@ test // Used in: opt_EQUAL_test, print_stmt, opt_test, raise_stmt,
      // opt_test_only, sliceop, testlist, dictorsetmaker, argument, 
      // testlist1, star_COMMA_test, star_test_COLON_test,
      // plus_COMMA_test, dictarg, listarg
-	: or_test opt_IF_ELSE  
+	: or_test opt_IF_ELSE 
 	| lambdef 
 	;
 opt_IF_ELSE // Used in: test
@@ -364,20 +369,20 @@ opt_IF_ELSE // Used in: test
 	| %empty
 	;
 or_test // Used in: old_test, test, opt_IF_ELSE, or_test, comp_for
-	: and_test { std::cout << "or test" << std::endl; }
+	: and_test 
 	| or_test OR and_test
 	;
 and_test // Used in: or_test, and_test
-	: not_test
+	: not_test 
 	| and_test AND not_test
 	;
 not_test // Used in: and_test, not_test
-	: NOT not_test
-	| comparison
+	: NOT not_test 
+	| comparison 
 	;
 comparison // Used in: not_test, comparison
-	: expr
-	| comparison comp_op expr
+	: expr 
+	| comparison comp_op expr 
 	;
 comp_op // Used in: comparison
 	: LESS
@@ -394,15 +399,15 @@ comp_op // Used in: comparison
 	;
 expr // Used in: exec_stmt, with_item, comparison, expr, 
      // exprlist, star_COMMA_expr
-	: xor_expr
+	: xor_expr 
 	| expr BAR xor_expr
 	;
 xor_expr // Used in: expr, xor_expr
-	: and_expr
+	: and_expr 
 	| xor_expr CIRCUMFLEX and_expr
 	;
 and_expr // Used in: xor_expr, and_expr
-	: shift_expr
+	: shift_expr 
 	| and_expr AMPERSAND shift_expr
 	;
 shift_expr // Used in: and_expr, shift_expr
@@ -414,7 +419,7 @@ pick_LEFTSHIFT_RIGHTSHIFT // Used in: shift_expr
 	| RIGHTSHIFT
 	;
 arith_expr // Used in: shift_expr, arith_expr
-	: term
+	: term 
 	| arith_expr pick_PLUS_MINUS term
     {
         if($2 == PLUS)  $$ = new AddNode($1, $3); 
@@ -426,7 +431,7 @@ pick_PLUS_MINUS // Used in: arith_expr
 	| MINUS { $$ = MINUS; }
 	;
 term // Used in: arith_expr, term
-	: factor
+	: factor 
 	| term pick_multop factor 
     {   
         switch ($2){
@@ -439,7 +444,7 @@ term // Used in: arith_expr, term
                 break;
             case PERCENT:
                 if($3==0 || $1 == 0) $$ = 0;
-                else $$ =  0; //$1 -$3 * floor((float)$1/(float)$3);
+                else $$ =  new PercentNode($1, $3); //$1 -$3 * floor((float)$1/(float)$3);
                 break;
             case DOUBLESLASH:
                 if($3==0 || $1 == 0) $$ = 0;
@@ -460,7 +465,7 @@ factor // Used in: term, factor, power
     {
         if($1 == PLUS) $$ = new SinglePlusNode($2, NULL);
         else if($1 == MINUS) $$ = new SingleMinusNode($2, NULL);
-        else if($1 == TILDE) $$ = new TildeNode($2, NULL);
+        else if($1 == TILDE); 
     }
 	| power 
 	;
@@ -479,20 +484,21 @@ star_trailer // Used in: power, star_trailer
 	;
 atom // Used in: power
 	: LPAR opt_yield_test RPAR { $$ = $2; }
-	| LSQB opt_listmaker RSQB
-	| LBRACE opt_dictorsetmaker RBRACE
-	| BACKQUOTE testlist1 BACKQUOTE 
-	| NAME 
-	| NUMBER { $$ = new NumberNode($1); }
-	| plus_STRING 
+	| LSQB opt_listmaker RSQB {}
+	| LBRACE opt_dictorsetmaker RBRACE {}
+	| BACKQUOTE testlist1 BACKQUOTE {}
+	| NAME { $$ = new StringNode(std::string($1)); delete $1; }
+	| NUMBER { $$ = new NumberNode($1, 'I'); }
+	| FLOAT { $$ = new NumberNode($1, 'D'); }
+	| plus_STRING {}
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test
 	: yield_expr
 	| testlist_comp
 	;
 opt_yield_test // Used in: atom
-	: pick_yield_expr_testlist_comp
-	| %empty { $$ = new Ast(); }
+	: pick_yield_expr_testlist_comp { }
+	| %empty { }
 	;
 opt_listmaker // Used in: atom
 	: listmaker
@@ -515,8 +521,8 @@ testlist_comp // Used in: pick_yield_expr_testlist_comp
 	| test star_COMMA_test
 	;
 lambdef // Used in: test
-	: LAMBDA varargslist COLON test
-	| LAMBDA COLON test
+	: LAMBDA varargslist COLON test {}
+	| LAMBDA COLON test {}
 	;
 trailer // Used in: star_trailer
 	: LPAR opt_arglist RPAR
@@ -548,7 +554,7 @@ exprlist // Used in: del_stmt, for_stmt, list_for, comp_for
 	;
 testlist // Used in: expr_stmt, pick_yield_expr_testlist, 
          // return_stmt, for_stmt, opt_testlist, yield_expr
-	: test star_COMMA_test
+	: test star_COMMA_test 
 	;
 dictorsetmaker // Used in: opt_dictorsetmaker
 	: test COLON test pick_comp_for
@@ -579,8 +585,8 @@ arglist // Used in: opt_arglist, arglist
 	| dictarg
 	;
 argument // Used in: arglist, arglist_postlist
-	: test opt_comp_for
-	| test EQUAL test
+	: test opt_comp_for 
+	| test EQUAL test 
 	;
 opt_comp_for // Used in: argument
 	: comp_for
@@ -620,8 +626,8 @@ encoding_decl // Used in: start
 	;
 yield_expr // Used in: pick_yield_expr_testlist, yield_stmt, 
            // pick_yield_expr_testlist_comp
-	: YIELD testlist
-	| YIELD
+	: YIELD testlist {$$ = $2; }
+	| YIELD {}
 	;
 star_fpdef_notest // Used in: fplist, star_fpdef_notest
 	: COMMA fpdef star_fpdef_notest
@@ -639,9 +645,9 @@ star_COMMA_fpdef // Used in: varargslist, star_COMMA_fpdef
 	| %empty
 	;
 star_COMMA_test // Used in: opt_test, listmaker, testlist_comp, testlist, pick_for_test, star_COMMA_test
-	: COMMA test star_COMMA_test { std::cout << ", " << $2->getVal() << std::endl;}
-	| COMMA
-	| %empty
+	: COMMA test star_COMMA_test {}
+	| COMMA {}
+	| %empty {}
 	;
 star_test_COLON_test // Used in: pick_comp_for, star_test_COLON_test
 	: COMMA test COLON test star_test_COLON_test
@@ -660,9 +666,9 @@ star_COMMA_import_as_name // Used in: import_as_names,
 	| %empty
 	;
 plus_COMMA_test // Used in: opt_test_2, plus_COMMA_test
-	: COMMA test plus_COMMA_test
-	| COMMA test COMMA
-	| COMMA test
+	: COMMA test plus_COMMA_test {}
+	| COMMA test COMMA {}
+	| COMMA test { }
 	;
 plus_COMMA_old_test // Used in: testlist_safe, plus_COMMA_old_test
 	: COMMA old_test plus_COMMA_old_test

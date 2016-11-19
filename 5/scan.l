@@ -57,7 +57,7 @@
 %option yylineno
 %option noyywrap
 
-number    {integer}|{longinteger}|{floatnumber}|{imagnumber}
+number    {integer}|{longinteger}|{imagnumber}
 
 imagnumber     {imaghead}[jJ]
 imaghead       {floatnumber}|{intpart}
@@ -246,11 +246,19 @@ comment   #.*
 
 {number}   { 
              ++numbers; 
-             yylval.d = atof(yytext); 
+             yylval.i = atof(yytext); 
              return NUMBER; 
            }
+{floatnumber} {
+             ++numbers;
+             yylval.d = atof(yytext);
+             return FLOAT;
+           } 
+            
 {name}     { 
              ++identifiers; 
+             yylval.c = new char[strlen(yytext)];
+             strcpy(yylval.c, yytext);
              return NAME; 
            }
 

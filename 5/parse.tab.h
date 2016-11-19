@@ -102,32 +102,33 @@ extern int yydebug;
     NOT = 312,
     NOTEQUAL = 313,
     NUMBER = 314,
-    OR = 315,
-    PASS = 316,
-    PERCENT = 317,
-    PERCENTEQUAL = 318,
-    PLUS = 319,
-    PLUSEQUAL = 320,
-    PRINT = 321,
-    RAISE = 322,
-    RBRACE = 323,
-    RETURN = 324,
-    RIGHTSHIFT = 325,
-    RIGHTSHIFTEQUAL = 326,
-    RPAR = 327,
-    RSQB = 328,
-    SEMI = 329,
-    SLASH = 330,
-    SLASHEQUAL = 331,
-    STAR = 332,
-    STAREQUAL = 333,
-    STRING = 334,
-    TILDE = 335,
-    TRY = 336,
-    VBAREQUAL = 337,
-    WHILE = 338,
-    WITH = 339,
-    YIELD = 340
+    FLOAT = 315,
+    OR = 316,
+    PASS = 317,
+    PERCENT = 318,
+    PERCENTEQUAL = 319,
+    PLUS = 320,
+    PLUSEQUAL = 321,
+    PRINT = 322,
+    RAISE = 323,
+    RBRACE = 324,
+    RETURN = 325,
+    RIGHTSHIFT = 326,
+    RIGHTSHIFTEQUAL = 327,
+    RPAR = 328,
+    RSQB = 329,
+    SEMI = 330,
+    SLASH = 331,
+    SLASHEQUAL = 332,
+    STAR = 333,
+    STAREQUAL = 334,
+    STRING = 335,
+    TILDE = 336,
+    TRY = 337,
+    VBAREQUAL = 338,
+    WHILE = 339,
+    WITH = 340,
+    YIELD = 341
   };
 #endif
 
@@ -136,13 +137,14 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 12 "parse.y" /* yacc.c:1909  */
+#line 13 "parse.y" /* yacc.c:1909  */
 
     Ast* ast;
     double d;
     int i;
+    char* c;
 
-#line 146 "parse.tab.h" /* yacc.c:1909  */
+#line 148 "parse.tab.h" /* yacc.c:1909  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
