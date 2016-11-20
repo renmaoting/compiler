@@ -18,13 +18,14 @@ public:
   Ast(): type('0'), mLabel(""), left(NULL), right(NULL) {}
   Ast(std::string label, Ast* l, Ast* r) :type('0'), mLabel(label), left(l), right(r) {}
   virtual ~Ast() { if(left) delete left; if(right) delete right; }
-  virtual Ast* getLeft() const { return left; }
-  virtual Ast* getRight() const { return right; }
+  Ast* getLeft() const { return left; }
+  Ast* getRight() const { return right; }
   virtual double getVal() { throw std::string("No Number"); }
+  virtual void setVal(double) { throw std::string("No Number To Be Set"); }
   virtual std::string getStr() const { throw std::string("No String"); }
   void setLabel(std::string label) { mLabel = label; }
   std::string getLabel() { return mLabel; }
-  void setType(const char t) { type = t; }
+  void setType(char t) { type = t; }
   char getType() const { return type; }
 
 private:
@@ -150,6 +151,7 @@ public:
         Ast::setLabel(os.str());
     }
     double getVal(){ return value; }
+    void setVal(double val) { value = val; }
 private:
     double value;
 };

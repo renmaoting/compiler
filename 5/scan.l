@@ -54,7 +54,6 @@
 
 %}
 
-%option yylineno
 %option noyywrap
 
 number    {integer}|{longinteger}|{imagnumber}
@@ -246,7 +245,7 @@ comment   #.*
 
 {number}   { 
              ++numbers; 
-             yylval.i = atof(yytext); 
+             yylval.i = atoi(yytext); 
              return NUMBER; 
            }
 {floatnumber} {

@@ -3,7 +3,6 @@
   #include <iostream>
   #include <cmath>
   #include "symbolTable.h" 
-  #include "stringNode.h" 
 	int yylex (void);
 	extern int yylineno;
 	extern char *yytext;
@@ -37,7 +36,8 @@
 %type <ast> star_COMMA_test test or_test and_test not_test comparison expr xor_expr and_expr shift_expr
 %type <ast> lambdef pick_yield_expr_testlist star_EQUAL testlist yield_expr
 %type <i> NUMBER print_stmt pick_PLUS_MINUS pick_multop pick_unop PLUS SLASH PERCENT TILDE MINUS LEFTSHIFT RIGHTSHIFT
-%type <ast> NOT AND
+%type <i> augassign PLUSEQUAL MINEQUAL STAREQUAL PERCENTEQUAL AMPEREQUAL VBAREQUAL CIRCUMFLEXEQUAL LEFTSHIFTEQUAL 
+%type <i> DOUBLESTAREQUAL DOUBLESLASHEQUAL SLASHEQUAL RIGHTSHIFTEQUAL NOT AND
 %type <d> FLOAT 
 %type <c> NAME
 
@@ -138,8 +138,55 @@ small_stmt // Used in: simple_stmt, small_stmt_STAR_OR_SEMI
 	| assert_stmt
 	;
 expr_stmt // Used in: small_stmt
-	: testlist augassign pick_yield_expr_testlist
-	| testlist star_EQUAL { SymbolTable::getInstance().addSymbol($1->getStr(), $2); }
+	: testlist augassign pick_yield_expr_testlist // +=, -=, /=, %=, |= ..
+    {
+        // firstly get the ast node from SymbolTable, then get the type and value of this two number
+        Ast *left = SymbolTable::getInstance().getAstNode($1->getStr()), *right = $3; 
+        char leftType = left->getType(), rightType = $3->getType();
+        int flag = (leftType=='D'||rightType=='D')?1:0;
+        double leftValue = left->getVal(), rightValue = right->getVal();            
+
+        switch($2){
+            case PLUSEQUAL: // +=
+                flag?left->setType('D'):left->setType('I');
+                leftValue += rightValue;
+                break; 
+
+            case MINEQUAL: // -=
+                flag?left->setType('D'):left->setType('I');
+                leftValue -= rightValue;
+                break;
+
+            case STAREQUAL: // *=
+                flag?left->setType('D'):left->setType('I');
+                leftValue *= rightValue;
+                break;
+
+            case SLASHEQUAL: // /=
+                flag?left->setType('D'):left->setType('I');
+                leftValue /= rightValue;
+                break;
+
+            case PERCENTEQUAL: // %=
+                flag?left->setType('D'):left->setType('I');
+                leftValue = (int)(leftValue-rightValue*floor(leftValue/rightValue));
+                break;
+
+            case DOUBLESLASHEQUAL: // //=
+                left->setType('I');
+                leftValue = floor(leftValue/rightValue); 
+                break;
+
+            default: break;
+        }    
+        left->setVal(leftValue); 
+    }
+	| testlist star_EQUAL // add symbols to symbol table
+    { 
+        $1->setVal($2->getVal());
+        $1->setType($2->getType());
+        delete $2;
+    }
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	: yield_expr 
@@ -150,18 +197,18 @@ star_EQUAL // Used in: expr_stmt, star_EQUAL
 	| %empty {}
 	;
 augassign // Used in: expr_stmt
-	: PLUSEQUAL
-	| MINEQUAL
-	| STAREQUAL
-	| SLASHEQUAL
-	| PERCENTEQUAL
+	: PLUSEQUAL { $$ = PLUSEQUAL; }
+	| MINEQUAL { $$ = MINEQUAL; }
+	| STAREQUAL { $$ = STAREQUAL; }
+	| SLASHEQUAL { $$ = SLASHEQUAL; }
+	| PERCENTEQUAL { $$ = PERCENTEQUAL; }
 	| AMPEREQUAL
 	| VBAREQUAL
 	| CIRCUMFLEXEQUAL
 	| LEFTSHIFTEQUAL
 	| RIGHTSHIFTEQUAL
-	| DOUBLESTAREQUAL
-	| DOUBLESLASHEQUAL
+	| DOUBLESTAREQUAL 
+	| DOUBLESLASHEQUAL { $$ = DOUBLESLASHEQUAL; }
 	;
 print_stmt // Used in: small_stmt
 	: PRINT opt_test { std::cout << $2->getVal() << std::endl; }
@@ -377,7 +424,7 @@ and_test // Used in: or_test, and_test
 	| and_test AND not_test
 	;
 not_test // Used in: and_test, not_test
-	: NOT not_test 
+	: NOT not_test {}
 	| comparison 
 	;
 comparison // Used in: not_test, comparison
@@ -487,7 +534,16 @@ atom // Used in: power
 	| LSQB opt_listmaker RSQB {}
 	| LBRACE opt_dictorsetmaker RBRACE {}
 	| BACKQUOTE testlist1 BACKQUOTE {}
-	| NAME { $$ = new StringNode(std::string($1)); delete $1; }
+	| NAME {
+        std::string str = std::string($1);
+        delete $1; 
+        Ast* node = SymbolTable::getInstance().getAstNode(str);
+        if(node) $$ = node;
+        else{
+            $$ = new NumberNode(0, 'A');
+            SymbolTable::getInstance().addSymbol(str, $$);
+        }
+    }
 	| NUMBER { $$ = new NumberNode($1, 'I'); }
 	| FLOAT { $$ = new NumberNode($1, 'D'); }
 	| plus_STRING {}

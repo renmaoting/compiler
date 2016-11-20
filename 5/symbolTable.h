@@ -14,25 +14,27 @@
 class SymbolTable
 {
 public:
-    static SymbolTable& getInstance();
+    static SymbolTable& getInstance()
+    {
+        static SymbolTable instance;
+        return instance;
+    }
+
+    ~SymbolTable(){}
 
     void addSymbol(std::string str, Ast* ast)
     {
         table[str] = ast;
     }
 
-    Ast* getValue(std::string str){
+    Ast* getAstNode(std::string str){
+        if(table.count(str)==0) return NULL;
         return table[str]; 
     }
 
 private:
     SymbolTable() {}
+    SymbolTable(SymbolTable&) {}
     std::unordered_map<std::string, Ast*> table;
 };
-
-SymbolTable& SymbolTable::getInstance()
-{
-    static SymbolTable instance;
-    return instance;
-}
 #endif
