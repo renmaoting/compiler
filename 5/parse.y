@@ -141,45 +141,40 @@ expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist // +=, -=, /=, %=, |= ..
     {
         // firstly get the ast node from SymbolTable, then get the type and value of this two number
-        Ast *left = SymbolTable::getInstance().getAstNode($1->getStr()), *right = $3; 
-        char leftType = left->getType(), rightType = $3->getType();
+        char leftType = $1->getType(), rightType = $3->getType();
         int flag = (leftType=='D'||rightType=='D')?1:0;
-        double leftValue = left->getVal(), rightValue = right->getVal();            
+        flag?$1->setType('D'):$1->setType('I');
+        double leftValue = $1->getVal(), rightValue = $3->getVal();            
 
         switch($2){
             case PLUSEQUAL: // +=
-                flag?left->setType('D'):left->setType('I');
                 leftValue += rightValue;
                 break; 
 
             case MINEQUAL: // -=
-                flag?left->setType('D'):left->setType('I');
                 leftValue -= rightValue;
                 break;
 
             case STAREQUAL: // *=
-                flag?left->setType('D'):left->setType('I');
                 leftValue *= rightValue;
                 break;
 
             case SLASHEQUAL: // /=
-                flag?left->setType('D'):left->setType('I');
                 leftValue /= rightValue;
                 break;
 
             case PERCENTEQUAL: // %=
-                flag?left->setType('D'):left->setType('I');
                 leftValue = (int)(leftValue-rightValue*floor(leftValue/rightValue));
                 break;
 
             case DOUBLESLASHEQUAL: // //=
-                left->setType('I');
+                $1->setType('I');
                 leftValue = floor(leftValue/rightValue); 
                 break;
 
             default: break;
         }    
-        left->setVal(leftValue); 
+        $1->setVal(leftValue); 
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
@@ -539,8 +534,8 @@ atom // Used in: power
         delete $1; 
         Ast* node = SymbolTable::getInstance().getAstNode(str);
         if(node) $$ = node;
-        else{
-            $$ = new NumberNode(0, 'A');
+        else{// change the type of node, indicate this symbol has not been initialized
+            $$ = new NumberNode(0, 'S');
             SymbolTable::getInstance().addSymbol(str, $$);
         }
     }

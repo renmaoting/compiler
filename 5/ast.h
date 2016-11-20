@@ -22,7 +22,6 @@ public:
   Ast* getRight() const { return right; }
   virtual double getVal() { throw std::string("No Number"); }
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
-  virtual std::string getStr() const { throw std::string("No String"); }
   void setLabel(std::string label) { mLabel = label; }
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }
@@ -80,6 +79,10 @@ public:
 
     double getVal(){
         double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
+        if(right ==0){
+            std::cerr << "denominator should not be 0" << std::endl; 
+            exit(0);
+        } 
         if(Ast::getType()=='I') return floor(left/right); 
         return left/right; 
     }
@@ -91,6 +94,10 @@ class DoubleDividNode:public Ast{
     }
 
     double getVal(){
+        if(Ast::getRight()->getVal()==0) {
+            std::cerr << "denominator should not be 0" << std::endl; 
+            exit(0);
+        }
         return floor(Ast::getLeft()->getVal()/Ast::getRight()->getVal()); 
     }
 };
@@ -104,6 +111,10 @@ public:
 
     double getVal(){ 
         double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
+        if(right == 0) {
+            std::cerr << "denominator should not be 0" << std::endl; 
+            exit(0);
+        }
         return (int)(left - right*floor(left/right));
     }
 };
@@ -150,7 +161,13 @@ public:
         os << val;
         Ast::setLabel(os.str());
     }
-    double getVal(){ return value; }
+    double getVal(){ 
+        if(Ast::getType()=='S'){
+            std::cerr << "undefined symbol" << std::endl;
+            exit(0);
+        }
+        return value; 
+    }
     void setVal(double val) { value = val; }
 private:
     double value;
