@@ -26,6 +26,8 @@ public:
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }
   char getType() const { return type; }
+  virtual int getRef() const { return 0; } // get number of reference
+  virtual void setRef(int ) { }
 
 private:
   char type;// integer, double or string
@@ -89,8 +91,10 @@ public:
 };
 
 class DoubleDividNode:public Ast{
+public:
     DoubleDividNode(Ast*l, Ast* r): Ast("//", l, r){
-        Ast::setType('I');
+        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
+        flag? Ast::setType('I'): Ast::setType('D');
     }
 
     double getVal(){
@@ -115,7 +119,7 @@ public:
             std::cerr << "denominator should not be 0" << std::endl; 
             exit(0);
         }
-        return (int)(left - right*floor(left/right));
+        return (left - right*floor(left/right));
     }
 };
 
@@ -155,7 +159,7 @@ public:
 // this node store an integer or double number
 class NumberNode:public Ast{
 public:
-    NumberNode(double val, char type): Ast("", NULL, NULL), value(val){
+    NumberNode(double val, char type): Ast("", NULL, NULL), ref(0), value(val){
         Ast::setType(type);
         std::ostringstream os;
         os << val;
@@ -168,8 +172,12 @@ public:
         }
         return value; 
     }
+
     void setVal(double val) { value = val; }
+    int getRef()const { return ref; }
+    void setRef(int cnt) { ref = cnt; }
 private:
+    int ref;
     double value;
 };
 

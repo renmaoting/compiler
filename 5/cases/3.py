@@ -1,1 +1,3 @@
-print 10+12
+x = 51
+x %= 8
+print x

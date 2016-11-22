@@ -161,11 +161,15 @@ expr_stmt // Used in: small_stmt
                 break;
 
             case SLASHEQUAL: // /=
+                if(rightValue ==0){
+                    std::cerr << "denominator should not be 0" << std::endl;
+                    exit(0);
+                }
                 leftValue /= rightValue;
                 break;
 
             case PERCENTEQUAL: // %=
-                leftValue = (int)(leftValue-rightValue*floor(leftValue/rightValue));
+                leftValue = leftValue-rightValue*floor(leftValue/rightValue);
                 break;
 
             case DOUBLESLASHEQUAL: // //=
@@ -175,13 +179,15 @@ expr_stmt // Used in: small_stmt
 
             default: break;
         }    
-        $1->setVal(leftValue); 
+        if(flag==0)
+            $1->setVal((int)leftValue); 
+        else $1->setVal(leftValue);
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
         $1->setVal($2->getVal());
         $1->setType($2->getType());
-        delete $2;
+        //if($2->getRef()==0) delete $2;
     }
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
@@ -209,8 +215,10 @@ augassign // Used in: expr_stmt
 print_stmt // Used in: small_stmt
 	: PRINT opt_test {
         double val = $2->getVal();
-        if($2->getType()=='D' && val == (int)val)
-            std::cout << val << ".0" << std::endl; 
+        std::cout << std::setprecision(12);
+        if($2->getType()=='D' && val == (int)val){
+            std::cout << val << ".0" << std::endl;
+        } 
         else std::cout << val << std::endl;
     }
 	| PRINT RIGHTSHIFT test opt_test_2 {}
@@ -470,7 +478,9 @@ arith_expr // Used in: shift_expr, arith_expr
 	: term 
 	| arith_expr pick_PLUS_MINUS term
     {
-        if($2 == PLUS)  $$ = new AddNode($1, $3); 
+        if($2 == PLUS){
+            $$ = new AddNode($1, $3);
+        }    
         else if($2 == MINUS)  $$ = new MinusNode($1, $3); 
     }
 	;
@@ -488,15 +498,15 @@ term // Used in: arith_expr, term
                 break;
             case SLASH:
                 if($3==0 || $1 == 0) $$ = 0;
-                else $$ = new DividNode($1, $3); //floor((float)$1/(float)$3);
+                else $$ = new DividNode($1, $3); 
                 break;
             case PERCENT:
                 if($3==0 || $1 == 0) $$ = 0;
-                else $$ =  new PercentNode($1, $3); //$1 -$3 * floor((float)$1/(float)$3);
+                else $$ =  new PercentNode($1, $3); 
                 break;
             case DOUBLESLASH:
                 if($3==0 || $1 == 0) $$ = 0;
-                else $$ = new DividNode($1, $3); //floor((float)$1/(float)$3);
+                else $$ = new DoubleDividNode($1, $3); 
                 break;
             default: break;
         }
@@ -511,11 +521,11 @@ pick_multop // Used in: term
 factor // Used in: term, factor, power
 	: pick_unop factor
     {
-        if($1 == PLUS) $$ = new SinglePlusNode($2, NULL);
-        else if($1 == MINUS) $$ = new SingleMinusNode($2, NULL);
+        if($1 == PLUS) $$ = $2;              
+        else if($1 == MINUS) {$$ = new SingleMinusNode($2, NULL); }  
         else if($1 == TILDE); 
     }
-	| power 
+	| power
 	;
 pick_unop // Used in: factor
 	: PLUS { $$ = PLUS; }
@@ -523,7 +533,9 @@ pick_unop // Used in: factor
 	| TILDE { $$ = TILDE; }
 	;
 power // Used in: factor
-	: atom star_trailer DOUBLESTAR factor { $$ = new ExponentNode($1, $4); }
+	: atom star_trailer DOUBLESTAR factor {
+        $$ = new ExponentNode($1, $4); 
+    }
 	| atom star_trailer 
 	;
 star_trailer // Used in: power, star_trailer
@@ -542,6 +554,7 @@ atom // Used in: power
         if(node) $$ = node;
         else{// change the type of node, indicate this symbol has not been initialized
             $$ = new NumberNode(0, 'S');
+            $$->setRef(1);
             SymbolTable::getInstance().addSymbol(str, $$);
         }
     }
