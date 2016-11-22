@@ -2,6 +2,7 @@
 %{
   #include <iostream>
   #include <cmath>
+  #include <iomanip>
   #include "symbolTable.h" 
 	int yylex (void);
 	extern int yylineno;
@@ -206,7 +207,12 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL { $$ = DOUBLESLASHEQUAL; }
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test { std::cout << $2->getVal() << std::endl; }
+	: PRINT opt_test {
+        double val = $2->getVal();
+        if($2->getType()=='D' && val == (int)val)
+            std::cout << val << ".0" << std::endl; 
+        else std::cout << val << std::endl;
+    }
 	| PRINT RIGHTSHIFT test opt_test_2 {}
 	;
 opt_test // Used in: print_stmt
