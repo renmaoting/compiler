@@ -26,8 +26,6 @@ public:
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }
   char getType() const { return type; }
-  virtual int getRef() const { return 0; } // get number of reference
-  virtual void setRef(int ) { }
 
 private:
   char type;// integer, double or string
@@ -174,10 +172,7 @@ public:
     }
 
     void setVal(double val) { value = val; }
-    int getRef()const { return ref; }
-    void setRef(int cnt) { ref = cnt; }
 private:
-    int ref;
     double value;
 };
 

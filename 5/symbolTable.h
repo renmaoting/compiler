@@ -20,7 +20,10 @@ public:
         return instance;
     }
 
-    ~SymbolTable(){}
+    ~SymbolTable(){ 
+        for(auto val: table)
+            delete val.second;
+    }
 
     void addSymbol(std::string str, Ast* ast)
     {
