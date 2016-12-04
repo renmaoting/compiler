@@ -1,0 +1,8 @@
+def f():
+    x = 99
+    print x
+
+x = 1
+f()
+print x
+
