@@ -24,9 +24,9 @@ public:
   void setLeft(Ast* l) { left = l; }
   Ast* getRight() const { return right; }
   void setRight(Ast* r) { right = r; }
-  virtual void evalue() { throw std::string("Nothing to be evalued"); }
   virtual double getVal() { throw std::string("No Number"); }
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
+  virtual std::vector<Ast*>* getVec() {throw std::string("No vector"); }
   virtual void setLabel(std::string label) { mLabel = label; }
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }

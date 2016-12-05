@@ -158,14 +158,32 @@ private:
 
 class PrintNode:public Ast{ // type = 'P'
 public:
-    PrintNode(Ast* n):Ast("", NULL, NULL), node(n) {} 
-    void evalue() { 
+    PrintNode(Ast* n):Ast("print", NULL, NULL), node(n) {
+        Ast::setType('P');
+    } 
+
+    double getVal(){
         double val = node->getVal();
         std::cout << std::setprecision(12);
         if(node->getType()=='D' && val == (int)val){
         std::cout << val << ".0" << std::endl;
         }
         else std::cout << val << std::endl;
+        return -1;
+    }
+
+private:
+    Ast* node;
+};
+
+class ReturnNode:public Ast{
+public:
+    ReturnNode(Ast* n):Ast("return", NULL, NULL), node(n){
+        Ast::setType('R');
+    }
+
+    double getVal(){
+        return node->getVal();
     }
 
 private:
@@ -174,35 +192,65 @@ private:
 
 class AssignNode:public Ast{ // type = 'A',  example: x = 10
 public:
-    AssignNode(Ast* l, Ast* r):Ast("assign", l, r){}
-    void evalue() {
-        Ast::getRight()->evalue();
+    AssignNode(Ast* l, Ast* r):Ast("assign", l, r){
+        Ast::setType('A');
+    }
+
+    double getVal(){
+        Ast::getRight()->getVal();
         SymbolTableManager::getInstance().getScope().addSymbol(Ast::getLeft()->getLabel(), Ast::getRight());
+        return -1;
     }
 };
 
 class SuiteNode:public Ast{ // type = 'F'
 public:
-    SuiteNode(std::string str, std::vector<Ast*>* v):Ast(str, NULL, NULL), vec(v) {
+    SuiteNode(std::vector<Ast*>* v):Ast("", NULL, NULL), vec(v) {
         Ast::setType('F');
+        std::cout << vec->size() << std::endl;
     }
 
-    void evalue(){
-        //as suiteNode is function, so evalue this node means somewhere calls this function, so should add a scope
-        SymbolTableManager::getInstance().insertScope();
-        for(Ast* val: (*vec)){//evalue each statement in function
-            if(val->getType()=='F'){ // if this is a function define, just add this function name into curent scope
-                SymbolTableManager::getInstance().getScope().addSymbol(val->getLabel(), val);
+    double getVal(){
+        for(int i = 0; i < (int)vec->size(); i++){// evalue each statement in function
+            if((*vec)[i]->getType()=='F'){  //if this is a function define, just add this function name into curent scope
+                SymbolTableManager::getInstance().getScope().addSymbol((*vec)[i]->getLabel(), (*vec)[i]);
                 continue;
             }
-            val->evalue();
+            (*vec)[i]->getVal();
         }
-        // when leave this function, pop a scope
-        SymbolTableManager::getInstance().popScope();
+        if(vec->back() && vec->back()->getType() == 'R')
+            return SymbolTableManager::getInstance().getScope().getAstNode(vec->back()->getLabel())->getVal();            
+        return -1;
+    }
+
+    std::vector<Ast*>* getVec(){
+        return vec;
     }
 
 private:
     std::vector<Ast*>* vec;
+};
+
+class FuncNode:public Ast{ // type = 'C'
+public:
+    FuncNode(std::string str):Ast(str, NULL, NULL){
+        Ast::setType('C');
+    }
+
+    double getVal(){
+        Ast* node = SymbolTableManager::getInstance().getScope().getAstNode(Ast::getLabel());
+        /*if(!node){
+            std::cerr << "No such a function!" << std::endl;
+            exit(0);
+        }*/
+        /*std::cout << "call name = " << Ast::getLabel() << std::endl;
+        SymbolTableManager::getInstance().insertScope();
+        double val = -1;
+    //    val = node->getVal(); 
+        SymbolTableManager::getInstance().popScope();
+        return val;*/
+        return -1;
+    }
 };
 
 class StringNode:public Ast{ // type = 'S'
@@ -214,23 +262,16 @@ public:
 
     double getVal(){
         int curScope = SymbolTableManager::getInstance().getScopeLevel();
-        if(SymbolTableManager::getInstance().getScope().ifExist(Ast::getLabel())==0){
-            std::cerr << "can't find this symbol in symbol table!" << std::endl;
+        while(curScope >= 0){
+            if(SymbolTableManager::getInstance().getScope().ifExist(Ast::getLabel()))
+                break;
+            curScope--;
         }
-        return SymbolTableManager::getInstance().getScope().getAstNode(Ast::getLabel())->getVal();
-    }
-
-    void evalue(){
-        if(SymbolTableManager::getInstance().getScope().ifExist(Ast::getLabel())==0){
+        if(curScope < 0){ 
             std::cerr << "can't find this symbol in symbol table!" << std::endl;
+            exit(0);
         }
-    }
-};
-
-class FuncNode:public Ast{ // type = 'C'
-public:
-    FuncNode(std::string str):Ast(str, NULL, NULL){
-        Ast::setType('C');
+        return SymbolTableManager::getInstance().getScope(curScope).getAstNode(Ast::getLabel())->getVal();
     }
 };
 #endif

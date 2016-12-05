@@ -97,9 +97,10 @@ decorated // Used in: compound_stmt
 funcdef // Used in: decorated, compound_stmt
 	: DEF NAME {level++;} parameters COLON suite { 
         level--; 
+        std::string str = std::string($2);
+        delete $2; 
+        $6->setLabel(str);        
         if(level ==0){
-            std::string str = std::string($2);
-            delete $2; 
             SymbolTableManager::getInstance().getScope().addSymbol(str, $6);
         }
     }
@@ -200,9 +201,15 @@ expr_stmt // Used in: small_stmt
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
-        $$ = new AssignNode($1, $2);
-        if(level == 0){
-            SymbolTableManager::getInstance().getScope().addSymbol($1->getLabel(), $2);
+        if($2==NULL) {
+            $$ = $1;
+            std::cout << "$2 == NULL" << std::endl;
+        }
+        else{
+            $$ = new AssignNode($1, $2);
+            if(level == 0){
+                SymbolTableManager::getInstance().getScope().addSymbol($1->getLabel(), $2);
+            }
         }
     }
 	;
@@ -212,7 +219,7 @@ pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
 	;
 star_EQUAL // Used in: expr_stmt, star_EQUAL
 	: EQUAL pick_yield_expr_testlist star_EQUAL { $$ = $2;  }
-	| %empty {}
+	| %empty { $$ = NULL ;}
 	;
 augassign // Used in: expr_stmt
 	: PLUSEQUAL { $$ = PLUSEQUAL; }
@@ -231,7 +238,7 @@ augassign // Used in: expr_stmt
 print_stmt // Used in: small_stmt
 	: PRINT opt_test {
         $$ = new PrintNode($2);
-        if(level==0) $$->evalue();
+        if(level==0) $$->getVal();
     }
 	| PRINT RIGHTSHIFT test opt_test_2 {}
 	;
@@ -263,7 +270,7 @@ continue_stmt // Used in: flow_stmt
 	: CONTINUE {}
 	;
 return_stmt // Used in: flow_stmt
-	: RETURN testlist {/*todo*/}
+	: RETURN testlist { $$ = new ReturnNode($2); }
 	| RETURN { /*TODO*/}
 	;
 yield_stmt // Used in: flow_stmt
@@ -411,7 +418,10 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt,
     }
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: stmt plus_stmt { $2->push_back($1); }
+	: stmt plus_stmt { 
+        $2->push_back($1);  
+        $$ = $2;
+    }
 	| stmt { $$ = new std::vector<Ast*>{$1}; }
 	;
 testlist_safe // Used in: list_for
@@ -541,7 +551,7 @@ factor // Used in: term, factor, power
         else if($1 == MINUS) {$$ = new SingleMinusNode($2, NULL); }  
         else if($1 == TILDE); 
     }
-	| power
+	| power 
 	;
 pick_unop // Used in: factor
 	: PLUS { $$ = PLUS; }
@@ -555,14 +565,10 @@ power // Used in: factor
 	| atom star_trailer { 
         if($2 != NULL) {
             $$ = new FuncNode($1->getLabel());
-            if(level ==0){
-                Ast* node = SymbolTableManager::getInstance().getScope().getAstNode($1->getLabel());
-                if(node == NULL){
-                    std::cerr << "No such a function! You idiot!" << std::endl;
-                    exit(0);
-                }
-                node->evalue();     
+            if(level == 0){
+                $$->getVal();
             }
+            std::cout << "end power" << std::endl;
         }
     }
 	;

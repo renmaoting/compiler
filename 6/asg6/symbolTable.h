@@ -35,6 +35,8 @@ public:
         return table[str]; 
     }
 
+    int getSize()const  { return table.size();  }
+
 private:
     std::unordered_map<std::string, Ast*> table;
 };
@@ -51,6 +53,7 @@ public:
     int getScopeLevel()const { return curScope; }
 
     SymbolTable& getScope() { return stm[curScope]; }
+
     SymbolTable& getScope(int cnt) { return stm[cnt]; }
 
     void insertScope() { 
@@ -60,6 +63,10 @@ public:
     }
 
     void popScope() { 
+        if(stm.size()<1) {
+            std::cerr << "can't pop scope" << std::endl;
+            return;
+        }
         stm.pop_back(); 
         curScope--;
     }
