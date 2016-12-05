@@ -10,6 +10,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <iomanip>
 #include <math.h>
 extern void yyerror(const char*);
 extern void yyerror(const char*, const char);
@@ -23,7 +24,7 @@ public:
   void setLeft(Ast* l) { left = l; }
   Ast* getRight() const { return right; }
   void setRight(Ast* r) { right = r; }
-  virtual void evalue() { throw std::string("No evalue"); }
+  virtual void evalue() { throw std::string("Nothing to be evalued"); }
   virtual double getVal() { throw std::string("No Number"); }
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
   virtual void setLabel(std::string label) { mLabel = label; }
@@ -37,183 +38,5 @@ private:
   Ast *left;
   Ast *right;
 };
-
-class AddNode:public Ast{
-public:
-    AddNode(Ast* l, Ast* r): Ast("+", l, r) {
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ 
-        return Ast::getLeft()->getVal() + Ast::getRight()->getVal(); 
-    }
-};
-
-class MinusNode:public Ast{
-public:
-    MinusNode(Ast* l, Ast* r): Ast("-", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){
-        return Ast::getLeft()->getVal() - Ast::getRight()->getVal(); 
-    }
-};
-
-class MulNode:public Ast{
-public:
-    MulNode(Ast* l, Ast* r): Ast("*", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ 
-        return Ast::getLeft()->getVal() * Ast::getRight()->getVal(); 
-    }
-};
-
-class DividNode:public Ast{
-public:
-    DividNode(Ast* l, Ast* r): Ast("/", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){
-        double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
-        if(right ==0){
-            std::cerr << "denominator should not be 0" << std::endl; 
-            exit(0);
-        } 
-        if(Ast::getType()=='I') return floor(left/right); 
-        return left/right; 
-    }
-};
-
-class DoubleDividNode:public Ast{
-public:
-    DoubleDividNode(Ast*l, Ast* r): Ast("//", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){
-        if(Ast::getRight()->getVal()==0) {
-            std::cerr << "denominator should not be 0" << std::endl; 
-            exit(0);
-        }
-        return floor(Ast::getLeft()->getVal()/Ast::getRight()->getVal()); 
-    }
-};
-
-class PercentNode:public Ast{
-public:
-    PercentNode(Ast* l, Ast* r): Ast("/", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ 
-        double left = Ast::getLeft()->getVal(), right = Ast::getRight()->getVal();
-        if(right == 0) {
-            std::cerr << "denominator should not be 0" << std::endl; 
-            exit(0);
-        }
-        return (left - right*floor(left/right));
-    }
-};
-
-// this node store an exponent expression
-class ExponentNode:public Ast{
-public:
-    ExponentNode(Ast* l, Ast* r): Ast("**", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ return pow(Ast::getLeft()->getVal() , Ast::getRight()->getVal()); }
-};
-
-// this node store a single minus expression
-class SingleMinusNode:public Ast{
-public:
-    SingleMinusNode(Ast* l, Ast* r): Ast("-", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ return -Ast::getLeft()->getVal(); }
-};
-
-// this node store a single plus expression
-class SinglePlusNode:public Ast{
-public:
-    SinglePlusNode(Ast* l, Ast* r): Ast("+", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
-    }
-
-    double getVal(){ return Ast::getLeft()->getVal(); }
-};
-
-// this node store an integer or double number
-class NumberNode:public Ast{
-public:
-    NumberNode(double val, char type): Ast("", NULL, NULL), value(val){
-        Ast::setType(type);
-        std::ostringstream os;
-        os << val;
-        Ast::setLabel(os.str());
-    }
-
-    void setLabel(std::string label) { Ast::setLabel(label); }
-
-    double getVal(){ 
-        if(Ast::getType()=='S'){
-            std::cerr << "undefined symbol" << std::endl;
-            exit(0);
-        }
-        return value; 
-    }
-
-    void setVal(double val) { value = val; }
-private:
-    double value;
-};
-
-class PrintNode:public Ast{
-public:
-    PrintNode(Ast* node):val(node) {} 
-    void evalue() { std::cout << val->getVal(); }
-private:
-    Ast* val;
-};
-
-class AssignNode:public Ast{
-public:
-    AssignNode(Ast* l, Ast* r):left(l), right(r){}
-    void evalue() {}
-
-private:
-    Ast *left, *right; 
-};
-
-class SuiteNode:public Ast{
-public:
-    SuiteNode(std::vector<Ast*>* v):vec(v) {}
-
-    void evalue(){
-        for(Ast* val: (*vec)){
-            val->evalue();
-        }
-    }
-
-private:
-    std::vector<Ast*>* vec;
-};
-
-
 
 #endif

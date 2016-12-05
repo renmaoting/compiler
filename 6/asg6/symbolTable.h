@@ -22,7 +22,12 @@ public:
 
     void addSymbol(std::string str, Ast* ast)
     {
+        if(table.count(str)) delete table[str];
         table[str] = ast;
+    }
+
+    bool ifExist(std::string str){
+        return table.count(str);
     }
 
     Ast* getAstNode(std::string str){
@@ -43,19 +48,27 @@ public:
         return instance;
     }
 
-    int getScopeLevel() { return curScope; }
+    int getScopeLevel()const { return curScope; }
 
     SymbolTable& getScope() { return stm[curScope]; }
+    SymbolTable& getScope(int cnt) { return stm[cnt]; }
 
     void insertScope() { 
         SymbolTable newST;
         stm.push_back(newST); 
+        curScope++;
     }
 
-    void popScope() { stm.pop_back(); }
+    void popScope() { 
+        stm.pop_back(); 
+        curScope--;
+    }
         
 private:
-    SymbolTableManager():stm(), curScope(0){}
+    SymbolTableManager():stm(), curScope(0){
+        SymbolTable st;
+        stm.push_back(st);
+    }
     std::vector<SymbolTable> stm;
     int curScope;
 };

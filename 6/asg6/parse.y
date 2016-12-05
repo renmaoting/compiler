@@ -4,9 +4,11 @@
   #include <cmath>
   #include <iomanip>
   #include "symbolTable.h" 
+  #include "childNode.h" 
 	int yylex (void);
 	extern int yylineno;
 	extern char *yytext;
+    int level = 0;
 	void yyerror (char const *);
 %}
 
@@ -39,7 +41,7 @@
 %type <ast> lambdef pick_yield_expr_testlist star_EQUAL testlist yield_expr suite simple_stmt NEWLINE
 %type <ast> small_stmt small_stmt_STAR_OR_SEMI print_stmt pass_stmt del_stmt flow_stmt import_stmt
 %type <ast> global_stmt exec_stmt stmt raise_stmt return_stmt break_stmt continue_stmt compound_stmt
-%type <ast> expr_stmt assert_stmt while_stmt if_stmt exprlist try_stmt with_stmt yield_stmt
+%type <ast> expr_stmt assert_stmt while_stmt if_stmt exprlist try_stmt with_stmt yield_stmt star_trailer 
 %type <vec> plus_stmt 
 %type <i> NUMBER pick_PLUS_MINUS pick_multop pick_unop PLUS SLASH PERCENT TILDE MINUS LEFTSHIFT RIGHTSHIFT
 %type <i> augassign PLUSEQUAL MINEQUAL STAREQUAL PERCENTEQUAL AMPEREQUAL VBAREQUAL CIRCUMFLEXEQUAL LEFTSHIFTEQUAL 
@@ -93,7 +95,14 @@ decorated // Used in: compound_stmt
 	| decorators funcdef
 	;
 funcdef // Used in: decorated, compound_stmt
-	: DEF NAME parameters COLON suite
+	: DEF NAME {level++;} parameters COLON suite { 
+        level--; 
+        if(level ==0){
+            std::string str = std::string($2);
+            delete $2; 
+            SymbolTableManager::getInstance().getScope().addSymbol(str, $6);
+        }
+    }
 	;
 parameters // Used in: funcdef
 	: LPAR varargslist RPAR
@@ -191,9 +200,10 @@ expr_stmt // Used in: small_stmt
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
-        $1->setVal($2->getVal());
-        $1->setType($2->getType());
-        //if($2->getRef()==0) delete $2;
+        $$ = new AssignNode($1, $2);
+        if(level == 0){
+            SymbolTableManager::getInstance().getScope().addSymbol($1->getLabel(), $2);
+        }
     }
 	;
 pick_yield_expr_testlist // Used in: expr_stmt, star_EQUAL
@@ -220,18 +230,14 @@ augassign // Used in: expr_stmt
 	;
 print_stmt // Used in: small_stmt
 	: PRINT opt_test {
-        double val = $2->getVal();
-        std::cout << std::setprecision(12);
-        if($2->getType()=='D' && val == (int)val){
-            std::cout << val << ".0" << std::endl;
-        } 
-        else std::cout << val << std::endl;
+        $$ = new PrintNode($2);
+        if(level==0) $$->evalue();
     }
 	| PRINT RIGHTSHIFT test opt_test_2 {}
 	;
 opt_test // Used in: print_stmt
 	: test star_COMMA_test 
-	| %empty { $$ = new Ast(); }
+	| %empty { }
 	;
 opt_test_2 // Used in: print_stmt
 	: plus_COMMA_test 
@@ -401,13 +407,12 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt,
       // try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt
 	| NEWLINE INDENT plus_stmt DEDENT{
-        //$$ = new SuiteNode($3);
-        std::cout << "suite" << std::endl; 
+        $$ = new SuiteNode($3);
     }
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: stmt plus_stmt { std::cout << "evol" << std::endl; }
-	| stmt { std::cout << "hello " << std::endl; }
+	: stmt plus_stmt { $2->push_back($1); }
+	| stmt { $$ = new std::vector<Ast*>{$1}; }
 	;
 testlist_safe // Used in: list_for
 	: old_test plus_COMMA_old_test
@@ -547,11 +552,23 @@ power // Used in: factor
 	: atom star_trailer DOUBLESTAR factor {
         $$ = new ExponentNode($1, $4); 
     }
-	| atom star_trailer 
+	| atom star_trailer { 
+        if($2 != NULL) {
+            $$ = new FuncNode($1->getLabel());
+            if(level ==0){
+                Ast* node = SymbolTableManager::getInstance().getScope().getAstNode($1->getLabel());
+                if(node == NULL){
+                    std::cerr << "No such a function! You idiot!" << std::endl;
+                    exit(0);
+                }
+                node->evalue();     
+            }
+        }
+    }
 	;
 star_trailer // Used in: power, star_trailer
-	: trailer star_trailer
-	| %empty
+	: trailer star_trailer {}
+	| %empty { $$ = NULL; }
 	;
 atom // Used in: power
 	: LPAR opt_yield_test RPAR { $$ = $2; }
@@ -561,12 +578,7 @@ atom // Used in: power
 	| NAME {
         std::string str = std::string($1);
         delete $1; 
-    //    Ast* node = SymbolTable::getInstance().getAstNode(str);
-    //    if(node) $$ = node;
-    //    else{// change the type of node, indicate this symbol has not been initialized
-    //        $$ = new NumberNode(0, 'S');
-    //        SymbolTable::getInstance().addSymbol(str, $$);
-    //    }*/
+        $$ = new StringNode(str);
     }
 	| NUMBER { $$ = new NumberNode($1, 'I'); }
 	| FLOAT { $$ = new NumberNode($1, 'D'); }
