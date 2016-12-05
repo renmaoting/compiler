@@ -2,6 +2,7 @@
 %{
   #include <iostream>
   #include <cmath>
+  #include <algorithm>
   #include <iomanip>
   #include "symbolTable.h" 
   #include "childNode.h" 
@@ -101,7 +102,7 @@ funcdef // Used in: decorated, compound_stmt
         delete $2; 
         $6->setLabel(str);        
         if(level ==0){
-            SymbolTableManager::getInstance().getScope().addSymbol(str, $6);
+            SymbolTableManager::getInstance().getScope()->addSymbol(str, $6);
         }
     }
 	;
@@ -203,12 +204,11 @@ expr_stmt // Used in: small_stmt
     { 
         if($2==NULL) {
             $$ = $1;
-            std::cout << "$2 == NULL" << std::endl;
         }
         else{
             $$ = new AssignNode($1, $2);
             if(level == 0){
-                SymbolTableManager::getInstance().getScope().addSymbol($1->getLabel(), $2);
+                SymbolTableManager::getInstance().getScope()->addSymbol($1->getLabel(), $2);
             }
         }
     }
@@ -414,6 +414,7 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt,
       // try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt
 	| NEWLINE INDENT plus_stmt DEDENT{
+        reverse($3->begin(), $3->end());
         $$ = new SuiteNode($3);
     }
 	;
@@ -568,7 +569,6 @@ power // Used in: factor
             if(level == 0){
                 $$->getVal();
             }
-            std::cout << "end power" << std::endl;
         }
     }
 	;

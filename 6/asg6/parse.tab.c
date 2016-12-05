@@ -66,6 +66,7 @@
 
   #include <iostream>
   #include <cmath>
+  #include <algorithm>
   #include <iomanip>
   #include "symbolTable.h" 
   #include "childNode.h" 
@@ -75,7 +76,7 @@
     int level = 0;
 	void yyerror (char const *);
 
-#line 79 "parse.tab.c" /* yacc.c:339  */
+#line 80 "parse.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -202,7 +203,7 @@ extern int yydebug;
 typedef union YYSTYPE YYSTYPE;
 union YYSTYPE
 {
-#line 15 "parse.y" /* yacc.c:355  */
+#line 16 "parse.y" /* yacc.c:355  */
 
     Ast* ast;
     double d;
@@ -210,7 +211,7 @@ union YYSTYPE
     char* c;
     std::vector<Ast*>* vec;
 
-#line 214 "parse.tab.c" /* yacc.c:355  */
+#line 215 "parse.tab.c" /* yacc.c:355  */
 };
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
@@ -225,7 +226,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 229 "parse.tab.c" /* yacc.c:358  */
+#line 230 "parse.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -531,12 +532,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,    56,    56,    57,    58,    67,    68,    71,    74,    75,
-      78,    79,    82,    83,    86,    87,    90,    91,    94,    95,
-      98,    98,   109,   110,   113,   114,   117,   118,   121,   122,
-     125,   126,   129,   130,   133,   134,   137,   140,   141,   144,
-     147,   148,   149,   150,   151,   152,   153,   154,   155,   158,
-     202,   217,   218,   221,   222,   225,   226,   227,   228,   229,
+       0,    57,    57,    58,    59,    68,    69,    72,    75,    76,
+      79,    80,    83,    84,    87,    88,    91,    92,    95,    96,
+      99,    99,   110,   111,   114,   115,   118,   119,   122,   123,
+     126,   127,   130,   131,   134,   135,   138,   141,   142,   145,
+     148,   149,   150,   151,   152,   153,   154,   155,   156,   159,
+     203,   217,   218,   221,   222,   225,   226,   227,   228,   229,
      230,   231,   232,   233,   234,   235,   236,   239,   243,   246,
      247,   250,   251,   254,   257,   260,   261,   262,   263,   264,
      267,   270,   273,   274,   277,   280,   281,   284,   285,   288,
@@ -546,13 +547,13 @@ static const yytype_uint16 yyrline[] =
      351,   352,   353,   354,   355,   356,   359,   360,   363,   364,
      367,   368,   371,   372,   375,   376,   379,   380,   383,   384,
      387,   388,   391,   394,   395,   398,   399,   402,   403,   406,
-     407,   410,   411,   415,   416,   421,   425,   428,   429,   432,
-     433,   436,   437,   446,   447,   450,   451,   454,   455,   458,
-     459,   462,   463,   466,   467,   470,   471,   472,   473,   474,
-     475,   476,   477,   478,   479,   480,   484,   485,   488,   489,
-     492,   493,   496,   497,   500,   501,   504,   505,   514,   515,
-     518,   519,   542,   543,   544,   545,   548,   554,   557,   558,
-     559,   562,   565,   576,   577,   580,   581,   582,   583,   584,
+     407,   410,   411,   415,   416,   422,   426,   429,   430,   433,
+     434,   437,   438,   447,   448,   451,   452,   455,   456,   459,
+     460,   463,   464,   467,   468,   471,   472,   473,   474,   475,
+     476,   477,   478,   479,   480,   481,   485,   486,   489,   490,
+     493,   494,   497,   498,   501,   502,   505,   506,   515,   516,
+     519,   520,   543,   544,   545,   546,   549,   555,   558,   559,
+     560,   563,   566,   576,   577,   580,   581,   582,   583,   584,
      589,   590,   591,   594,   595,   598,   599,   602,   603,   606,
      607,   610,   611,   614,   615,   618,   619,   622,   623,   626,
      627,   628,   631,   634,   635,   636,   639,   640,   643,   644,
@@ -1809,27 +1810,27 @@ yyreduce:
   switch (yyn)
     {
         case 20:
-#line 98 "parse.y" /* yacc.c:1646  */
+#line 99 "parse.y" /* yacc.c:1646  */
     {level++;}
-#line 1815 "parse.tab.c" /* yacc.c:1646  */
+#line 1816 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 21:
-#line 98 "parse.y" /* yacc.c:1646  */
+#line 99 "parse.y" /* yacc.c:1646  */
     { 
         level--; 
         std::string str = std::string((yyvsp[-4].c));
         delete (yyvsp[-4].c); 
         (yyvsp[0].ast)->setLabel(str);        
         if(level ==0){
-            SymbolTableManager::getInstance().getScope().addSymbol(str, (yyvsp[0].ast));
+            SymbolTableManager::getInstance().getScope()->addSymbol(str, (yyvsp[0].ast));
         }
     }
-#line 1829 "parse.tab.c" /* yacc.c:1646  */
+#line 1830 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 49:
-#line 159 "parse.y" /* yacc.c:1646  */
+#line 160 "parse.y" /* yacc.c:1646  */
     {
         // firstly get the ast node from SymbolTable, then get the type and value of this two number
         char leftType = (yyvsp[-2].ast)->getType(), rightType = (yyvsp[0].ast)->getType();
@@ -1873,20 +1874,19 @@ yyreduce:
             (yyvsp[-2].ast)->setVal((int)leftValue); 
         else (yyvsp[-2].ast)->setVal(leftValue);
     }
-#line 1877 "parse.tab.c" /* yacc.c:1646  */
+#line 1878 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 50:
-#line 203 "parse.y" /* yacc.c:1646  */
+#line 204 "parse.y" /* yacc.c:1646  */
     { 
         if((yyvsp[0].ast)==NULL) {
             (yyval.ast) = (yyvsp[-1].ast);
-            std::cout << "$2 == NULL" << std::endl;
         }
         else{
             (yyval.ast) = new AssignNode((yyvsp[-1].ast), (yyvsp[0].ast));
             if(level == 0){
-                SymbolTableManager::getInstance().getScope().addSymbol((yyvsp[-1].ast)->getLabel(), (yyvsp[0].ast));
+                SymbolTableManager::getInstance().getScope()->addSymbol((yyvsp[-1].ast)->getLabel(), (yyvsp[0].ast));
             }
         }
     }
@@ -2129,57 +2129,58 @@ yyreduce:
   case 154:
 #line 416 "parse.y" /* yacc.c:1646  */
     {
+        reverse((yyvsp[-1].vec)->begin(), (yyvsp[-1].vec)->end());
         (yyval.ast) = new SuiteNode((yyvsp[-1].vec));
     }
-#line 2135 "parse.tab.c" /* yacc.c:1646  */
+#line 2136 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 155:
-#line 421 "parse.y" /* yacc.c:1646  */
+#line 422 "parse.y" /* yacc.c:1646  */
     { 
         (yyvsp[0].vec)->push_back((yyvsp[-1].ast));  
         (yyval.vec) = (yyvsp[0].vec);
     }
-#line 2144 "parse.tab.c" /* yacc.c:1646  */
+#line 2145 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 156:
-#line 425 "parse.y" /* yacc.c:1646  */
+#line 426 "parse.y" /* yacc.c:1646  */
     { (yyval.vec) = new std::vector<Ast*>{(yyvsp[0].ast)}; }
-#line 2150 "parse.tab.c" /* yacc.c:1646  */
+#line 2151 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 171:
-#line 462 "parse.y" /* yacc.c:1646  */
+#line 463 "parse.y" /* yacc.c:1646  */
     {}
-#line 2156 "parse.tab.c" /* yacc.c:1646  */
+#line 2157 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 197:
-#line 506 "parse.y" /* yacc.c:1646  */
+#line 507 "parse.y" /* yacc.c:1646  */
     {
         if((yyvsp[-1].i) == PLUS){
             (yyval.ast) = new AddNode((yyvsp[-2].ast), (yyvsp[0].ast));
         }    
         else if((yyvsp[-1].i) == MINUS)  (yyval.ast) = new MinusNode((yyvsp[-2].ast), (yyvsp[0].ast)); 
     }
-#line 2167 "parse.tab.c" /* yacc.c:1646  */
+#line 2168 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 198:
-#line 514 "parse.y" /* yacc.c:1646  */
+#line 515 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = PLUS; }
-#line 2173 "parse.tab.c" /* yacc.c:1646  */
+#line 2174 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 199:
-#line 515 "parse.y" /* yacc.c:1646  */
+#line 516 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = MINUS; }
-#line 2179 "parse.tab.c" /* yacc.c:1646  */
+#line 2180 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 201:
-#line 520 "parse.y" /* yacc.c:1646  */
+#line 521 "parse.y" /* yacc.c:1646  */
     {   
         switch ((yyvsp[-1].i)){
             case STAR:
@@ -2200,78 +2201,77 @@ yyreduce:
             default: break;
         }
     }
-#line 2204 "parse.tab.c" /* yacc.c:1646  */
+#line 2205 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 202:
-#line 542 "parse.y" /* yacc.c:1646  */
+#line 543 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = STAR; }
-#line 2210 "parse.tab.c" /* yacc.c:1646  */
+#line 2211 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 203:
-#line 543 "parse.y" /* yacc.c:1646  */
+#line 544 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = SLASH; }
-#line 2216 "parse.tab.c" /* yacc.c:1646  */
+#line 2217 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 204:
-#line 544 "parse.y" /* yacc.c:1646  */
+#line 545 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = PERCENT; }
-#line 2222 "parse.tab.c" /* yacc.c:1646  */
+#line 2223 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 205:
-#line 545 "parse.y" /* yacc.c:1646  */
+#line 546 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = DOUBLESLASH; }
-#line 2228 "parse.tab.c" /* yacc.c:1646  */
+#line 2229 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 206:
-#line 549 "parse.y" /* yacc.c:1646  */
+#line 550 "parse.y" /* yacc.c:1646  */
     {
         if((yyvsp[-1].i) == PLUS) (yyval.ast) = (yyvsp[0].ast);              
         else if((yyvsp[-1].i) == MINUS) {(yyval.ast) = new SingleMinusNode((yyvsp[0].ast), NULL); }  
         else if((yyvsp[-1].i) == TILDE); 
     }
-#line 2238 "parse.tab.c" /* yacc.c:1646  */
+#line 2239 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 208:
-#line 557 "parse.y" /* yacc.c:1646  */
+#line 558 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = PLUS; }
-#line 2244 "parse.tab.c" /* yacc.c:1646  */
+#line 2245 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 209:
-#line 558 "parse.y" /* yacc.c:1646  */
+#line 559 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = MINUS; }
-#line 2250 "parse.tab.c" /* yacc.c:1646  */
+#line 2251 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 210:
-#line 559 "parse.y" /* yacc.c:1646  */
+#line 560 "parse.y" /* yacc.c:1646  */
     { (yyval.i) = TILDE; }
-#line 2256 "parse.tab.c" /* yacc.c:1646  */
+#line 2257 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 211:
-#line 562 "parse.y" /* yacc.c:1646  */
+#line 563 "parse.y" /* yacc.c:1646  */
     {
         (yyval.ast) = new ExponentNode((yyvsp[-3].ast), (yyvsp[0].ast)); 
     }
-#line 2264 "parse.tab.c" /* yacc.c:1646  */
+#line 2265 "parse.tab.c" /* yacc.c:1646  */
     break;
 
   case 212:
-#line 565 "parse.y" /* yacc.c:1646  */
+#line 566 "parse.y" /* yacc.c:1646  */
     { 
         if((yyvsp[0].ast) != NULL) {
             (yyval.ast) = new FuncNode((yyvsp[-1].ast)->getLabel());
             if(level == 0){
                 (yyval.ast)->getVal();
             }
-            std::cout << "end power" << std::endl;
         }
     }
 #line 2278 "parse.tab.c" /* yacc.c:1646  */

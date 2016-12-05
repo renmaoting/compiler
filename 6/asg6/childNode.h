@@ -198,7 +198,7 @@ public:
 
     double getVal(){
         Ast::getRight()->getVal();
-        SymbolTableManager::getInstance().getScope().addSymbol(Ast::getLeft()->getLabel(), Ast::getRight());
+        SymbolTableManager::getInstance().getScope()->addSymbol(Ast::getLeft()->getLabel(), Ast::getRight());
         return -1;
     }
 };
@@ -207,19 +207,18 @@ class SuiteNode:public Ast{ // type = 'F'
 public:
     SuiteNode(std::vector<Ast*>* v):Ast("", NULL, NULL), vec(v) {
         Ast::setType('F');
-        std::cout << vec->size() << std::endl;
     }
 
     double getVal(){
         for(int i = 0; i < (int)vec->size(); i++){// evalue each statement in function
             if((*vec)[i]->getType()=='F'){  //if this is a function define, just add this function name into curent scope
-                SymbolTableManager::getInstance().getScope().addSymbol((*vec)[i]->getLabel(), (*vec)[i]);
+                SymbolTableManager::getInstance().getScope()->addSymbol((*vec)[i]->getLabel(), (*vec)[i]);
                 continue;
             }
             (*vec)[i]->getVal();
         }
         if(vec->back() && vec->back()->getType() == 'R')
-            return SymbolTableManager::getInstance().getScope().getAstNode(vec->back()->getLabel())->getVal();            
+            return SymbolTableManager::getInstance().getScope()->getAstNode(vec->back()->getLabel())->getVal();            
         return -1;
     }
 
@@ -238,32 +237,29 @@ public:
     }
 
     double getVal(){
-        Ast* node = SymbolTableManager::getInstance().getScope().getAstNode(Ast::getLabel());
-        /*if(!node){
+        Ast* node = SymbolTableManager::getInstance().getScope()->getAstNode(Ast::getLabel());
+        if(!node){
             std::cerr << "No such a function!" << std::endl;
             exit(0);
-        }*/
-        /*std::cout << "call name = " << Ast::getLabel() << std::endl;
+        }
         SymbolTableManager::getInstance().insertScope();
         double val = -1;
-    //    val = node->getVal(); 
+        val = node->getVal(); 
         SymbolTableManager::getInstance().popScope();
-        return val;*/
-        return -1;
+        return val;
     }
 };
 
 class StringNode:public Ast{ // type = 'S'
 public:
-    StringNode(std::string str) {
-        Ast::setLabel(str);
+    StringNode(std::string str):Ast(str, NULL, NULL) {
         Ast::setType('S');
     }
 
     double getVal(){
         int curScope = SymbolTableManager::getInstance().getScopeLevel();
         while(curScope >= 0){
-            if(SymbolTableManager::getInstance().getScope().ifExist(Ast::getLabel()))
+            if(SymbolTableManager::getInstance().getScope(curScope)->ifExist(Ast::getLabel()))
                 break;
             curScope--;
         }
@@ -271,7 +267,7 @@ public:
             std::cerr << "can't find this symbol in symbol table!" << std::endl;
             exit(0);
         }
-        return SymbolTableManager::getInstance().getScope(curScope).getAstNode(Ast::getLabel())->getVal();
+        return SymbolTableManager::getInstance().getScope(curScope)->getAstNode(Ast::getLabel())->getVal();
     }
 };
 #endif

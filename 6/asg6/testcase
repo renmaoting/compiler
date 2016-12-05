@@ -1,4 +1,8 @@
 def f():
+    def g():
+        x = 10
+        print x
     x = 100
     print x 
+    g()
 f()

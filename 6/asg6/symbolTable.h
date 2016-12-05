@@ -52,12 +52,12 @@ public:
 
     int getScopeLevel()const { return curScope; }
 
-    SymbolTable& getScope() { return stm[curScope]; }
+    SymbolTable* getScope() { return stm[curScope]; }
 
-    SymbolTable& getScope(int cnt) { return stm[cnt]; }
+    SymbolTable* getScope(int cnt) { return stm[cnt]; }
 
     void insertScope() { 
-        SymbolTable newST;
+        SymbolTable *newST = new SymbolTable();
         stm.push_back(newST); 
         curScope++;
     }
@@ -73,10 +73,10 @@ public:
         
 private:
     SymbolTableManager():stm(), curScope(0){
-        SymbolTable st;
+        SymbolTable *st = new SymbolTable();
         stm.push_back(st);
     }
-    std::vector<SymbolTable> stm;
+    std::vector<SymbolTable*> stm;
     int curScope;
 };
 #endif
