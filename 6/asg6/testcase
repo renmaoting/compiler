@@ -2,7 +2,7 @@ def f():
     def g():
         x = 10
         print x
+    g()
     x = 100
     print x 
-    g()
 f()

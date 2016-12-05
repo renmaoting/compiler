@@ -215,6 +215,7 @@ public:
                 SymbolTableManager::getInstance().getScope()->addSymbol((*vec)[i]->getLabel(), (*vec)[i]);
                 continue;
             }
+            std::cout << "type = " << (*vec)[i]->getType() << std::endl;
             (*vec)[i]->getVal();
         }
         if(vec->back() && vec->back()->getType() == 'R')
