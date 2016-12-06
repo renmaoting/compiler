@@ -224,8 +224,6 @@ print_stmt // Used in: small_stmt
 	: PRINT opt_test {
         $$ = new PrintNode($2);
         if(level==0) {
-            std::cout << "call global print" << std::endl;
-            std::cout << $$->getLabel() << std::endl;
             $$->getVal();
         }
     }

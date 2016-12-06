@@ -352,15 +352,13 @@ public:
     }
 
     double getVal(){
-        std::cout << "function call node" << std::endl;
-        Ast* node = SymbolTableManager::getInstance().getAstNode(Ast::getLabel());
+        Ast* node = SymbolTableManager::getInstance().getScope()->getAstNode(Ast::getLabel());
         if(!node){
             std::cerr << "No such a function!" << std::endl;
             exit(0);
         }
         SymbolTableManager::getInstance().insertScope();
-        double val = -1;
-        val = node->getVal(); 
+        double val = node->getVal(); 
         SymbolTableManager::getInstance().popScope();
         return val;
     }
