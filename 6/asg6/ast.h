@@ -26,7 +26,6 @@ public:
   void setRight(Ast* r) { right = r; }
   virtual double getVal() { throw std::string("No Number"); }
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
-  virtual std::vector<Ast*>* getVec() {throw std::string("No vector"); }
   virtual void setLabel(std::string label) { mLabel = label; }
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }

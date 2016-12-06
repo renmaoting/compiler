@@ -224,8 +224,8 @@ Grammar
   152 suite: simple_stmt
   153      | NEWLINE INDENT plus_stmt DEDENT
 
-  154 plus_stmt: stmt plus_stmt
-  155          | stmt
+  154 plus_stmt: plus_stmt stmt
+  155          | %empty
 
   156 testlist_safe: old_test plus_COMMA_old_test
   157              | old_test
@@ -604,7 +604,7 @@ fpdef (105)
 fplist (106)
     on left: 35, on right: 34
 stmt (107)
-    on left: 36 37, on right: 5 8 154 155
+    on left: 36 37, on right: 5 8 154
 simple_stmt (108)
     on left: 38, on right: 36 152
 small_stmt (109)
@@ -5592,91 +5592,9 @@ State 330
 
   153 suite: NEWLINE INDENT . plus_stmt DEDENT
 
-    ASSERT     shift, and go to state 1
-    AT         shift, and go to state 2
-    BACKQUOTE  shift, and go to state 3
-    BREAK      shift, and go to state 4
-    CLASS      shift, and go to state 5
-    CONTINUE   shift, and go to state 6
-    DEF        shift, and go to state 7
-    DEL        shift, and go to state 8
-    EXEC       shift, and go to state 9
-    FOR        shift, and go to state 10
-    FROM       shift, and go to state 11
-    GLOBAL     shift, and go to state 12
-    IF         shift, and go to state 13
-    IMPORT     shift, and go to state 14
-    LAMBDA     shift, and go to state 15
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PASS       shift, and go to state 25
-    PLUS       shift, and go to state 26
-    PRINT      shift, and go to state 27
-    RAISE      shift, and go to state 28
-    RETURN     shift, and go to state 29
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-    TRY        shift, and go to state 32
-    WHILE      shift, and go to state 33
-    WITH       shift, and go to state 34
-    YIELD      shift, and go to state 35
+    $default  reduce using rule 155 (plus_stmt)
 
-    decorator      go to state 41
-    decorators     go to state 42
-    decorated      go to state 43
-    funcdef        go to state 44
-    stmt           go to state 386
-    simple_stmt    go to state 46
-    small_stmt     go to state 47
-    expr_stmt      go to state 48
-    print_stmt     go to state 49
-    del_stmt       go to state 50
-    pass_stmt      go to state 51
-    flow_stmt      go to state 52
-    break_stmt     go to state 53
-    continue_stmt  go to state 54
-    return_stmt    go to state 55
-    yield_stmt     go to state 56
-    raise_stmt     go to state 57
-    import_stmt    go to state 58
-    import_name    go to state 59
-    import_from    go to state 60
-    global_stmt    go to state 61
-    exec_stmt      go to state 62
-    assert_stmt    go to state 63
-    compound_stmt  go to state 64
-    if_stmt        go to state 65
-    while_stmt     go to state 66
-    for_stmt       go to state 67
-    try_stmt       go to state 68
-    with_stmt      go to state 69
-    plus_stmt      go to state 387
-    test           go to state 70
-    or_test        go to state 71
-    and_test       go to state 72
-    not_test       go to state 73
-    comparison     go to state 74
-    expr           go to state 75
-    xor_expr       go to state 76
-    and_expr       go to state 77
-    shift_expr     go to state 78
-    arith_expr     go to state 79
-    term           go to state 80
-    factor         go to state 81
-    pick_unop      go to state 82
-    power          go to state 83
-    atom           go to state 84
-    plus_STRING    go to state 85
-    lambdef        go to state 86
-    testlist       go to state 87
-    classdef       go to state 88
-    yield_expr     go to state 90
+    plus_stmt  go to state 386
 
 
 State 331
@@ -5700,7 +5618,7 @@ State 331
 
     $default  reduce using rule 147 (except_clause)
 
-    test         go to state 388
+    test         go to state 387
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -5723,18 +5641,18 @@ State 332
 
   134 try_stmt: TRY COLON suite FINALLY . COLON suite
 
-    COLON  shift, and go to state 389
+    COLON  shift, and go to state 388
 
 
 State 333
 
   133 try_stmt: TRY COLON suite plus_except . opt_ELSE opt_FINALLY
 
-    ELSE  shift, and go to state 390
+    ELSE  shift, and go to state 389
 
     $default  reduce using rule 138 (opt_ELSE)
 
-    opt_ELSE  go to state 391
+    opt_ELSE  go to state 390
 
 
 State 334
@@ -5742,7 +5660,7 @@ State 334
   135 plus_except: except_clause . COLON suite plus_except
   136            | except_clause . COLON suite
 
-    COLON  shift, and go to state 392
+    COLON  shift, and go to state 391
 
 
 State 335
@@ -5750,7 +5668,7 @@ State 335
   129 while_stmt: WHILE test COLON suite . ELSE COLON suite
   130           | WHILE test COLON suite .
 
-    ELSE  shift, and go to state 393
+    ELSE  shift, and go to state 392
 
     $default  reduce using rule 130 (while_stmt)
 
@@ -5763,7 +5681,7 @@ State 336
 
     $default  reduce using rule 143 (star_COMMA_with_item)
 
-    star_COMMA_with_item  go to state 394
+    star_COMMA_with_item  go to state 393
 
 
 State 337
@@ -5816,7 +5734,7 @@ State 337
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 395
+    suite          go to state 394
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -5880,7 +5798,7 @@ State 341
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    test         go to state 396
+    test         go to state 395
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -5938,7 +5856,7 @@ State 345
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    test         go to state 397
+    test         go to state 396
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -6011,7 +5929,7 @@ State 348
     atom         go to state 84
     plus_STRING  go to state 85
     lambdef      go to state 86
-    arglist      go to state 398
+    arglist      go to state 397
     argument     go to state 278
     dictarg      go to state 279
     listarg      go to state 280
@@ -6053,16 +5971,16 @@ State 349
     atom              go to state 84
     plus_STRING       go to state 85
     lambdef           go to state 86
-    argument          go to state 399
-    dictarg           go to state 400
-    arglist_postlist  go to state 401
+    argument          go to state 398
+    dictarg           go to state 399
+    arglist_postlist  go to state 400
 
 
 State 350
 
   242 subscript: DOT DOT . DOT
 
-    DOT  shift, and go to state 402
+    DOT  shift, and go to state 401
 
 
 State 351
@@ -6112,7 +6030,7 @@ State 352
     atom           go to state 84
     plus_STRING    go to state 85
     lambdef        go to state 86
-    subscript      go to state 403
+    subscript      go to state 402
     opt_test_only  go to state 285
 
 
@@ -6143,7 +6061,7 @@ State 354
 
     $default  reduce using rule 246 (opt_test_only)
 
-    test           go to state 404
+    test           go to state 403
     or_test        go to state 71
     and_test       go to state 72
     not_test       go to state 73
@@ -6160,7 +6078,7 @@ State 354
     atom           go to state 84
     plus_STRING    go to state 85
     lambdef        go to state 86
-    opt_test_only  go to state 405
+    opt_test_only  go to state 404
 
 
 State 355
@@ -6181,14 +6099,14 @@ State 357
 
    11 decorator: AT dotted_name LPAR opt_arglist RPAR . NEWLINE
 
-    NEWLINE  shift, and go to state 406
+    NEWLINE  shift, and go to state 405
 
 
 State 358
 
   259 classdef: CLASS NAME LPAR opt_testlist RPAR . COLON suite
 
-    COLON  shift, and go to state 407
+    COLON  shift, and go to state 406
 
 
 State 359
@@ -6202,7 +6120,7 @@ State 360
 
    21 parameters: LPAR varargslist . RPAR
 
-    RPAR  shift, and go to state 408
+    RPAR  shift, and go to state 407
 
 
 State 361
@@ -6255,7 +6173,7 @@ State 361
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 409
+    suite          go to state 408
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -6302,7 +6220,7 @@ State 363
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    test         go to state 410
+    test         go to state 409
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -6379,7 +6297,7 @@ State 365
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 411
+    suite          go to state 410
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -6412,14 +6330,14 @@ State 367
 
   100 pick_STAR_import: LPAR import_as_names . RPAR
 
-    RPAR  shift, and go to state 412
+    RPAR  shift, and go to state 411
 
 
 State 368
 
   102 import_as_name: NAME AS . NAME
 
-    NAME  shift, and go to state 413
+    NAME  shift, and go to state 412
 
 
 State 369
@@ -6431,7 +6349,7 @@ State 369
 
     $default  reduce using rule 309 (star_COMMA_import_as_name)
 
-    import_as_name  go to state 414
+    import_as_name  go to state 413
 
 
 State 370
@@ -6459,7 +6377,7 @@ State 371
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    test         go to state 415
+    test         go to state 414
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -6483,7 +6401,7 @@ State 372
   125 if_stmt: IF test COLON suite star_ELIF . ELSE COLON suite
   126        | IF test COLON suite star_ELIF .
 
-    ELSE  shift, and go to state 416
+    ELSE  shift, and go to state 415
 
     $default  reduce using rule 126 (if_stmt)
 
@@ -6496,14 +6414,14 @@ State 373
 
     $default  reduce using rule 292 (star_fpdef_notest)
 
-    star_fpdef_notest  go to state 417
+    star_fpdef_notest  go to state 416
 
 
 State 374
 
    29 opt_DOUBLESTAR_NAME: COMMA . DOUBLESTAR NAME
 
-    DOUBLESTAR  shift, and go to state 418
+    DOUBLESTAR  shift, and go to state 417
 
 
 State 375
@@ -6529,7 +6447,7 @@ State 377
 
     $default  reduce using rule 26 (opt_EQUAL_test)
 
-    opt_EQUAL_test  go to state 419
+    opt_EQUAL_test  go to state 418
 
 
 State 378
@@ -6553,7 +6471,7 @@ State 378
 
     $default  reduce using rule 303 (star_test_COLON_test)
 
-    test         go to state 420
+    test         go to state 419
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -6611,7 +6529,7 @@ State 382
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    or_test      go to state 421
+    or_test      go to state 420
     and_test     go to state 72
     not_test     go to state 73
     comparison   go to state 74
@@ -6634,7 +6552,7 @@ State 383
   276         | FOR exprlist IN . testlist_safe
 
     BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
+    LAMBDA     shift, and go to state 421
     LBRACE     shift, and go to state 16
     LPAR       shift, and go to state 17
     LSQB       shift, and go to state 18
@@ -6647,10 +6565,10 @@ State 383
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    testlist_safe  go to state 423
-    old_test       go to state 424
-    old_lambdef    go to state 425
-    or_test        go to state 426
+    testlist_safe  go to state 422
+    old_test       go to state 423
+    old_lambdef    go to state 424
+    or_test        go to state 425
     and_test       go to state 72
     not_test       go to state 73
     comparison     go to state 74
@@ -6673,11 +6591,11 @@ State 384
   312                | COMMA test . COMMA
   313                | COMMA test .
 
-    COMMA  shift, and go to state 427
+    COMMA  shift, and go to state 426
 
     $default  reduce using rule 313 (plus_COMMA_test)
 
-    plus_COMMA_test  go to state 428
+    plus_COMMA_test  go to state 427
 
 
 State 385
@@ -6689,8 +6607,8 @@ State 385
 
 State 386
 
-  154 plus_stmt: stmt . plus_stmt
-  155          | stmt .
+  153 suite: NEWLINE INDENT plus_stmt . DEDENT
+  154 plus_stmt: plus_stmt . stmt
 
     ASSERT     shift, and go to state 1
     AT         shift, and go to state 2
@@ -6698,6 +6616,7 @@ State 386
     BREAK      shift, and go to state 4
     CLASS      shift, and go to state 5
     CONTINUE   shift, and go to state 6
+    DEDENT     shift, and go to state 428
     DEF        shift, and go to state 7
     DEL        shift, and go to state 8
     EXEC       shift, and go to state 9
@@ -6727,13 +6646,11 @@ State 386
     WITH       shift, and go to state 34
     YIELD      shift, and go to state 35
 
-    $default  reduce using rule 155 (plus_stmt)
-
     decorator      go to state 41
     decorators     go to state 42
     decorated      go to state 43
     funcdef        go to state 44
-    stmt           go to state 386
+    stmt           go to state 429
     simple_stmt    go to state 46
     small_stmt     go to state 47
     expr_stmt      go to state 48
@@ -6758,7 +6675,6 @@ State 386
     for_stmt       go to state 67
     try_stmt       go to state 68
     with_stmt      go to state 69
-    plus_stmt      go to state 429
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -6783,25 +6699,18 @@ State 386
 
 State 387
 
-  153 suite: NEWLINE INDENT plus_stmt . DEDENT
-
-    DEDENT  shift, and go to state 430
-
-
-State 388
-
   146 except_clause: EXCEPT test . opt_AS_COMMA
 
-    AS     shift, and go to state 431
-    COMMA  shift, and go to state 432
+    AS     shift, and go to state 430
+    COMMA  shift, and go to state 431
 
     $default  reduce using rule 151 (opt_AS_COMMA)
 
-    pick_AS_COMMA  go to state 433
-    opt_AS_COMMA   go to state 434
+    pick_AS_COMMA  go to state 432
+    opt_AS_COMMA   go to state 433
 
 
-State 389
+State 388
 
   134 try_stmt: TRY COLON suite FINALLY COLON . suite
 
@@ -6851,7 +6760,7 @@ State 389
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 435
+    suite          go to state 434
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -6873,25 +6782,25 @@ State 389
     yield_expr     go to state 90
 
 
-State 390
+State 389
 
   137 opt_ELSE: ELSE . COLON suite
 
-    COLON  shift, and go to state 436
+    COLON  shift, and go to state 435
 
 
-State 391
+State 390
 
   133 try_stmt: TRY COLON suite plus_except opt_ELSE . opt_FINALLY
 
-    FINALLY  shift, and go to state 437
+    FINALLY  shift, and go to state 436
 
     $default  reduce using rule 140 (opt_FINALLY)
 
-    opt_FINALLY  go to state 438
+    opt_FINALLY  go to state 437
 
 
-State 392
+State 391
 
   135 plus_except: except_clause COLON . suite plus_except
   136            | except_clause COLON . suite
@@ -6942,7 +6851,7 @@ State 392
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 439
+    suite          go to state 438
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -6964,80 +6873,80 @@ State 392
     yield_expr     go to state 90
 
 
-State 393
+State 392
 
   129 while_stmt: WHILE test COLON suite ELSE . COLON suite
 
-    COLON  shift, and go to state 440
+    COLON  shift, and go to state 439
 
 
-State 394
+State 393
 
   142 star_COMMA_with_item: COMMA with_item star_COMMA_with_item .
 
     $default  reduce using rule 142 (star_COMMA_with_item)
 
 
-State 395
+State 394
 
   141 with_stmt: WITH with_item star_COMMA_with_item COLON suite .
 
     $default  reduce using rule 141 (with_stmt)
 
 
-State 396
+State 395
 
   164 opt_IF_ELSE: IF or_test ELSE test .
 
     $default  reduce using rule 164 (opt_IF_ELSE)
 
 
-State 397
+State 396
 
   270 argument: test EQUAL test .
 
     $default  reduce using rule 270 (argument)
 
 
-State 398
+State 397
 
   263 arglist: argument COMMA arglist .
 
     $default  reduce using rule 263 (arglist)
 
 
-State 399
+State 398
 
   319 arglist_postlist: argument . COMMA arglist_postlist
   321                 | argument .
 
-    COMMA  shift, and go to state 441
+    COMMA  shift, and go to state 440
 
     $default  reduce using rule 321 (arglist_postlist)
 
 
-State 400
+State 399
 
   320 arglist_postlist: dictarg .
 
     $default  reduce using rule 320 (arglist_postlist)
 
 
-State 401
+State 400
 
   266 arglist: listarg COMMA arglist_postlist .
 
     $default  reduce using rule 266 (arglist)
 
 
-State 402
+State 401
 
   242 subscript: DOT DOT DOT .
 
     $default  reduce using rule 242 (subscript)
 
 
-State 403
+State 402
 
   305 star_COMMA_subscript: COMMA subscript . star_COMMA_subscript
 
@@ -7045,36 +6954,36 @@ State 403
 
     $default  reduce using rule 307 (star_COMMA_subscript)
 
-    star_COMMA_subscript  go to state 442
+    star_COMMA_subscript  go to state 441
 
 
-State 404
+State 403
 
   245 opt_test_only: test .
 
     $default  reduce using rule 245 (opt_test_only)
 
 
-State 405
+State 404
 
   244 subscript: opt_test_only COLON opt_test_only . opt_sliceop
 
-    COLON  shift, and go to state 443
+    COLON  shift, and go to state 442
 
     $default  reduce using rule 248 (opt_sliceop)
 
-    opt_sliceop  go to state 444
-    sliceop      go to state 445
+    opt_sliceop  go to state 443
+    sliceop      go to state 444
 
 
-State 406
+State 405
 
    11 decorator: AT dotted_name LPAR opt_arglist RPAR NEWLINE .
 
     $default  reduce using rule 11 (decorator)
 
 
-State 407
+State 406
 
   259 classdef: CLASS NAME LPAR opt_testlist RPAR COLON . suite
 
@@ -7124,7 +7033,7 @@ State 407
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 446
+    suite          go to state 445
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -7146,52 +7055,52 @@ State 407
     yield_expr     go to state 90
 
 
-State 408
+State 407
 
    21 parameters: LPAR varargslist RPAR .
 
     $default  reduce using rule 21 (parameters)
 
 
-State 409
+State 408
 
    20 funcdef: DEF NAME $@1 parameters COLON suite .
 
     $default  reduce using rule 20 (funcdef)
 
 
-State 410
+State 409
 
    86 opt_COMMA_test: COMMA test .
 
     $default  reduce using rule 86 (opt_COMMA_test)
 
 
-State 411
+State 410
 
   131 for_stmt: FOR exprlist IN testlist COLON suite . ELSE COLON suite
   132         | FOR exprlist IN testlist COLON suite .
 
-    ELSE  shift, and go to state 447
+    ELSE  shift, and go to state 446
 
     $default  reduce using rule 132 (for_stmt)
 
 
-State 412
+State 411
 
   100 pick_STAR_import: LPAR import_as_names RPAR .
 
     $default  reduce using rule 100 (pick_STAR_import)
 
 
-State 413
+State 412
 
   102 import_as_name: NAME AS NAME .
 
     $default  reduce using rule 102 (import_as_name)
 
 
-State 414
+State 413
 
   308 star_COMMA_import_as_name: COMMA import_as_name . star_COMMA_import_as_name
 
@@ -7199,38 +7108,38 @@ State 414
 
     $default  reduce using rule 310 (star_COMMA_import_as_name)
 
-    star_COMMA_import_as_name  go to state 448
+    star_COMMA_import_as_name  go to state 447
+
+
+State 414
+
+  127 star_ELIF: ELIF test . COLON suite star_ELIF
+
+    COLON  shift, and go to state 448
 
 
 State 415
 
-  127 star_ELIF: ELIF test . COLON suite star_ELIF
+  125 if_stmt: IF test COLON suite star_ELIF ELSE . COLON suite
 
     COLON  shift, and go to state 449
 
 
 State 416
 
-  125 if_stmt: IF test COLON suite star_ELIF ELSE . COLON suite
-
-    COLON  shift, and go to state 450
-
-
-State 417
-
   290 star_fpdef_notest: COMMA fpdef star_fpdef_notest .
 
     $default  reduce using rule 290 (star_fpdef_notest)
 
 
-State 418
+State 417
 
    29 opt_DOUBLESTAR_NAME: COMMA DOUBLESTAR . NAME
 
-    NAME  shift, and go to state 451
+    NAME  shift, and go to state 450
 
 
-State 419
+State 418
 
    27 star_fpdef_COMMA: fpdef opt_EQUAL_test . COMMA star_fpdef_COMMA
   296 star_COMMA_fpdef: COMMA fpdef opt_EQUAL_test . star_COMMA_fpdef
@@ -7239,84 +7148,84 @@ State 419
 
     $default  reduce using rule 298 (star_COMMA_fpdef)
 
-    star_COMMA_fpdef  go to state 452
+    star_COMMA_fpdef  go to state 451
 
 
-State 420
+State 419
 
   302 star_test_COLON_test: COMMA test . COLON test star_test_COLON_test
 
-    COLON  shift, and go to state 453
+    COLON  shift, and go to state 452
 
 
-State 421
+State 420
 
   167 or_test: or_test . OR and_test
   281 comp_for: FOR exprlist IN or_test . comp_iter
   282         | FOR exprlist IN or_test .
 
     FOR  shift, and go to state 233
-    IF   shift, and go to state 454
+    IF   shift, and go to state 453
     OR   shift, and go to state 154
 
     $default  reduce using rule 282 (comp_for)
 
-    comp_iter  go to state 455
-    comp_for   go to state 456
-    comp_if    go to state 457
+    comp_iter  go to state 454
+    comp_for   go to state 455
+    comp_if    go to state 456
 
 
-State 422
+State 421
 
   160 old_lambdef: LAMBDA . varargslist COLON old_test
   161            | LAMBDA . COLON old_test
 
-    COLON  shift, and go to state 458
+    COLON  shift, and go to state 457
     LPAR   shift, and go to state 112
     NAME   shift, and go to state 113
 
     $default  reduce using rule 28 (star_fpdef_COMMA)
 
-    varargslist       go to state 459
+    varargslist       go to state 458
     star_fpdef_COMMA  go to state 115
     fpdef             go to state 116
 
 
-State 423
+State 422
 
   275 list_for: FOR exprlist IN testlist_safe . list_iter
   276         | FOR exprlist IN testlist_safe .
 
     FOR  shift, and go to state 241
-    IF   shift, and go to state 460
+    IF   shift, and go to state 459
 
     $default  reduce using rule 276 (list_for)
 
-    list_iter  go to state 461
-    list_for   go to state 462
-    list_if    go to state 463
+    list_iter  go to state 460
+    list_for   go to state 461
+    list_if    go to state 462
 
 
-State 424
+State 423
 
   156 testlist_safe: old_test . plus_COMMA_old_test
   157              | old_test .
 
-    COMMA  shift, and go to state 464
+    COMMA  shift, and go to state 463
 
     $default  reduce using rule 157 (testlist_safe)
 
-    plus_COMMA_old_test  go to state 465
+    plus_COMMA_old_test  go to state 464
 
 
-State 425
+State 424
 
   159 old_test: old_lambdef .
 
     $default  reduce using rule 159 (old_test)
 
 
-State 426
+State 425
 
   158 old_test: or_test .
   167 or_test: or_test . OR and_test
@@ -7326,7 +7235,7 @@ State 426
     $default  reduce using rule 158 (old_test)
 
 
-State 427
+State 426
 
   311 plus_COMMA_test: COMMA . test plus_COMMA_test
   312                | COMMA . test COMMA
@@ -7368,42 +7277,42 @@ State 427
     lambdef      go to state 86
 
 
-State 428
+State 427
 
   311 plus_COMMA_test: COMMA test plus_COMMA_test .
 
     $default  reduce using rule 311 (plus_COMMA_test)
 
 
-State 429
-
-  154 plus_stmt: stmt plus_stmt .
-
-    $default  reduce using rule 154 (plus_stmt)
-
-
-State 430
+State 428
 
   153 suite: NEWLINE INDENT plus_stmt DEDENT .
 
     $default  reduce using rule 153 (suite)
 
 
-State 431
+State 429
+
+  154 plus_stmt: plus_stmt stmt .
+
+    $default  reduce using rule 154 (plus_stmt)
+
+
+State 430
 
   148 pick_AS_COMMA: AS .
 
     $default  reduce using rule 148 (pick_AS_COMMA)
 
 
-State 432
+State 431
 
   149 pick_AS_COMMA: COMMA .
 
     $default  reduce using rule 149 (pick_AS_COMMA)
 
 
-State 433
+State 432
 
   150 opt_AS_COMMA: pick_AS_COMMA . test
 
@@ -7421,7 +7330,7 @@ State 433
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    test         go to state 466
+    test         go to state 465
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -7440,21 +7349,21 @@ State 433
     lambdef      go to state 86
 
 
-State 434
+State 433
 
   146 except_clause: EXCEPT test opt_AS_COMMA .
 
     $default  reduce using rule 146 (except_clause)
 
 
-State 435
+State 434
 
   134 try_stmt: TRY COLON suite FINALLY COLON suite .
 
     $default  reduce using rule 134 (try_stmt)
 
 
-State 436
+State 435
 
   137 opt_ELSE: ELSE COLON . suite
 
@@ -7504,7 +7413,7 @@ State 436
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 467
+    suite          go to state 466
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -7526,21 +7435,21 @@ State 436
     yield_expr     go to state 90
 
 
-State 437
+State 436
 
   139 opt_FINALLY: FINALLY . COLON suite
 
-    COLON  shift, and go to state 468
+    COLON  shift, and go to state 467
 
 
-State 438
+State 437
 
   133 try_stmt: TRY COLON suite plus_except opt_ELSE opt_FINALLY .
 
     $default  reduce using rule 133 (try_stmt)
 
 
-State 439
+State 438
 
   135 plus_except: except_clause COLON suite . plus_except
   136            | except_clause COLON suite .
@@ -7549,11 +7458,11 @@ State 439
 
     $default  reduce using rule 136 (plus_except)
 
-    plus_except    go to state 469
+    plus_except    go to state 468
     except_clause  go to state 334
 
 
-State 440
+State 439
 
   129 while_stmt: WHILE test COLON suite ELSE COLON . suite
 
@@ -7603,7 +7512,7 @@ State 440
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 470
+    suite          go to state 469
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -7625,7 +7534,7 @@ State 440
     yield_expr     go to state 90
 
 
-State 441
+State 440
 
   319 arglist_postlist: argument COMMA . arglist_postlist
 
@@ -7661,19 +7570,19 @@ State 441
     atom              go to state 84
     plus_STRING       go to state 85
     lambdef           go to state 86
-    argument          go to state 399
-    dictarg           go to state 400
-    arglist_postlist  go to state 471
+    argument          go to state 398
+    dictarg           go to state 399
+    arglist_postlist  go to state 470
 
 
-State 442
+State 441
 
   305 star_COMMA_subscript: COMMA subscript star_COMMA_subscript .
 
     $default  reduce using rule 305 (star_COMMA_subscript)
 
 
-State 443
+State 442
 
   249 sliceop: COLON . test
   250        | COLON .
@@ -7694,7 +7603,7 @@ State 443
 
     $default  reduce using rule 250 (sliceop)
 
-    test         go to state 472
+    test         go to state 471
     or_test      go to state 71
     and_test     go to state 72
     not_test     go to state 73
@@ -7713,44 +7622,116 @@ State 443
     lambdef      go to state 86
 
 
-State 444
+State 443
 
   244 subscript: opt_test_only COLON opt_test_only opt_sliceop .
 
     $default  reduce using rule 244 (subscript)
 
 
-State 445
+State 444
 
   247 opt_sliceop: sliceop .
 
     $default  reduce using rule 247 (opt_sliceop)
 
 
-State 446
+State 445
 
   259 classdef: CLASS NAME LPAR opt_testlist RPAR COLON suite .
 
     $default  reduce using rule 259 (classdef)
 
 
-State 447
+State 446
 
   131 for_stmt: FOR exprlist IN testlist COLON suite ELSE . COLON suite
 
-    COLON  shift, and go to state 473
+    COLON  shift, and go to state 472
 
 
-State 448
+State 447
 
   308 star_COMMA_import_as_name: COMMA import_as_name star_COMMA_import_as_name .
 
     $default  reduce using rule 308 (star_COMMA_import_as_name)
 
 
-State 449
+State 448
 
   127 star_ELIF: ELIF test COLON . suite star_ELIF
+
+    ASSERT     shift, and go to state 1
+    BACKQUOTE  shift, and go to state 3
+    BREAK      shift, and go to state 4
+    CONTINUE   shift, and go to state 6
+    DEL        shift, and go to state 8
+    EXEC       shift, and go to state 9
+    FROM       shift, and go to state 11
+    GLOBAL     shift, and go to state 12
+    IMPORT     shift, and go to state 14
+    LAMBDA     shift, and go to state 15
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NEWLINE    shift, and go to state 249
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PASS       shift, and go to state 25
+    PLUS       shift, and go to state 26
+    PRINT      shift, and go to state 27
+    RAISE      shift, and go to state 28
+    RETURN     shift, and go to state 29
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+    YIELD      shift, and go to state 35
+
+    simple_stmt    go to state 250
+    small_stmt     go to state 47
+    expr_stmt      go to state 48
+    print_stmt     go to state 49
+    del_stmt       go to state 50
+    pass_stmt      go to state 51
+    flow_stmt      go to state 52
+    break_stmt     go to state 53
+    continue_stmt  go to state 54
+    return_stmt    go to state 55
+    yield_stmt     go to state 56
+    raise_stmt     go to state 57
+    import_stmt    go to state 58
+    import_name    go to state 59
+    import_from    go to state 60
+    global_stmt    go to state 61
+    exec_stmt      go to state 62
+    assert_stmt    go to state 63
+    suite          go to state 473
+    test           go to state 70
+    or_test        go to state 71
+    and_test       go to state 72
+    not_test       go to state 73
+    comparison     go to state 74
+    expr           go to state 75
+    xor_expr       go to state 76
+    and_expr       go to state 77
+    shift_expr     go to state 78
+    arith_expr     go to state 79
+    term           go to state 80
+    factor         go to state 81
+    pick_unop      go to state 82
+    power          go to state 83
+    atom           go to state 84
+    plus_STRING    go to state 85
+    lambdef        go to state 86
+    testlist       go to state 87
+    yield_expr     go to state 90
+
+
+State 449
+
+  125 if_stmt: IF test COLON suite star_ELIF ELSE COLON . suite
 
     ASSERT     shift, and go to state 1
     BACKQUOTE  shift, and go to state 3
@@ -7822,7 +7803,280 @@ State 449
 
 State 450
 
-  125 if_stmt: IF test COLON suite star_ELIF ELSE COLON . suite
+   29 opt_DOUBLESTAR_NAME: COMMA DOUBLESTAR NAME .
+
+    $default  reduce using rule 29 (opt_DOUBLESTAR_NAME)
+
+
+State 451
+
+  296 star_COMMA_fpdef: COMMA fpdef opt_EQUAL_test star_COMMA_fpdef .
+
+    $default  reduce using rule 296 (star_COMMA_fpdef)
+
+
+State 452
+
+  302 star_test_COLON_test: COMMA test COLON . test star_test_COLON_test
+
+    BACKQUOTE  shift, and go to state 3
+    LAMBDA     shift, and go to state 15
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PLUS       shift, and go to state 26
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+
+    test         go to state 475
+    or_test      go to state 71
+    and_test     go to state 72
+    not_test     go to state 73
+    comparison   go to state 74
+    expr         go to state 75
+    xor_expr     go to state 76
+    and_expr     go to state 77
+    shift_expr   go to state 78
+    arith_expr   go to state 79
+    term         go to state 80
+    factor       go to state 81
+    pick_unop    go to state 82
+    power        go to state 83
+    atom         go to state 84
+    plus_STRING  go to state 85
+    lambdef      go to state 86
+
+
+State 453
+
+  283 comp_if: IF . old_test comp_iter
+  284        | IF . old_test
+
+    BACKQUOTE  shift, and go to state 3
+    LAMBDA     shift, and go to state 421
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PLUS       shift, and go to state 26
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+
+    old_test     go to state 476
+    old_lambdef  go to state 424
+    or_test      go to state 425
+    and_test     go to state 72
+    not_test     go to state 73
+    comparison   go to state 74
+    expr         go to state 75
+    xor_expr     go to state 76
+    and_expr     go to state 77
+    shift_expr   go to state 78
+    arith_expr   go to state 79
+    term         go to state 80
+    factor       go to state 81
+    pick_unop    go to state 82
+    power        go to state 83
+    atom         go to state 84
+    plus_STRING  go to state 85
+
+
+State 454
+
+  281 comp_for: FOR exprlist IN or_test comp_iter .
+
+    $default  reduce using rule 281 (comp_for)
+
+
+State 455
+
+  279 comp_iter: comp_for .
+
+    $default  reduce using rule 279 (comp_iter)
+
+
+State 456
+
+  280 comp_iter: comp_if .
+
+    $default  reduce using rule 280 (comp_iter)
+
+
+State 457
+
+  161 old_lambdef: LAMBDA COLON . old_test
+
+    BACKQUOTE  shift, and go to state 3
+    LAMBDA     shift, and go to state 421
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PLUS       shift, and go to state 26
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+
+    old_test     go to state 477
+    old_lambdef  go to state 424
+    or_test      go to state 425
+    and_test     go to state 72
+    not_test     go to state 73
+    comparison   go to state 74
+    expr         go to state 75
+    xor_expr     go to state 76
+    and_expr     go to state 77
+    shift_expr   go to state 78
+    arith_expr   go to state 79
+    term         go to state 80
+    factor       go to state 81
+    pick_unop    go to state 82
+    power        go to state 83
+    atom         go to state 84
+    plus_STRING  go to state 85
+
+
+State 458
+
+  160 old_lambdef: LAMBDA varargslist . COLON old_test
+
+    COLON  shift, and go to state 478
+
+
+State 459
+
+  277 list_if: IF . old_test list_iter
+  278        | IF . old_test
+
+    BACKQUOTE  shift, and go to state 3
+    LAMBDA     shift, and go to state 421
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PLUS       shift, and go to state 26
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+
+    old_test     go to state 479
+    old_lambdef  go to state 424
+    or_test      go to state 425
+    and_test     go to state 72
+    not_test     go to state 73
+    comparison   go to state 74
+    expr         go to state 75
+    xor_expr     go to state 76
+    and_expr     go to state 77
+    shift_expr   go to state 78
+    arith_expr   go to state 79
+    term         go to state 80
+    factor       go to state 81
+    pick_unop    go to state 82
+    power        go to state 83
+    atom         go to state 84
+    plus_STRING  go to state 85
+
+
+State 460
+
+  275 list_for: FOR exprlist IN testlist_safe list_iter .
+
+    $default  reduce using rule 275 (list_for)
+
+
+State 461
+
+  273 list_iter: list_for .
+
+    $default  reduce using rule 273 (list_iter)
+
+
+State 462
+
+  274 list_iter: list_if .
+
+    $default  reduce using rule 274 (list_iter)
+
+
+State 463
+
+  314 plus_COMMA_old_test: COMMA . old_test plus_COMMA_old_test
+  315                    | COMMA . old_test COMMA
+  316                    | COMMA . old_test
+
+    BACKQUOTE  shift, and go to state 3
+    LAMBDA     shift, and go to state 421
+    LBRACE     shift, and go to state 16
+    LPAR       shift, and go to state 17
+    LSQB       shift, and go to state 18
+    MINUS      shift, and go to state 19
+    NAME       shift, and go to state 91
+    NOT        shift, and go to state 22
+    NUMBER     shift, and go to state 23
+    FLOAT      shift, and go to state 24
+    PLUS       shift, and go to state 26
+    STRING     shift, and go to state 30
+    TILDE      shift, and go to state 31
+
+    old_test     go to state 480
+    old_lambdef  go to state 424
+    or_test      go to state 425
+    and_test     go to state 72
+    not_test     go to state 73
+    comparison   go to state 74
+    expr         go to state 75
+    xor_expr     go to state 76
+    and_expr     go to state 77
+    shift_expr   go to state 78
+    arith_expr   go to state 79
+    term         go to state 80
+    factor       go to state 81
+    pick_unop    go to state 82
+    power        go to state 83
+    atom         go to state 84
+    plus_STRING  go to state 85
+
+
+State 464
+
+  156 testlist_safe: old_test plus_COMMA_old_test .
+
+    $default  reduce using rule 156 (testlist_safe)
+
+
+State 465
+
+  150 opt_AS_COMMA: pick_AS_COMMA test .
+
+    $default  reduce using rule 150 (opt_AS_COMMA)
+
+
+State 466
+
+  137 opt_ELSE: ELSE COLON suite .
+
+    $default  reduce using rule 137 (opt_ELSE)
+
+
+State 467
+
+  139 opt_FINALLY: FINALLY COLON . suite
 
     ASSERT     shift, and go to state 1
     BACKQUOTE  shift, and go to state 3
@@ -7870,7 +8124,7 @@ State 450
     global_stmt    go to state 61
     exec_stmt      go to state 62
     assert_stmt    go to state 63
-    suite          go to state 475
+    suite          go to state 481
     test           go to state 70
     or_test        go to state 71
     and_test       go to state 72
@@ -7892,282 +8146,37 @@ State 450
     yield_expr     go to state 90
 
 
-State 451
-
-   29 opt_DOUBLESTAR_NAME: COMMA DOUBLESTAR NAME .
-
-    $default  reduce using rule 29 (opt_DOUBLESTAR_NAME)
-
-
-State 452
-
-  296 star_COMMA_fpdef: COMMA fpdef opt_EQUAL_test star_COMMA_fpdef .
-
-    $default  reduce using rule 296 (star_COMMA_fpdef)
-
-
-State 453
-
-  302 star_test_COLON_test: COMMA test COLON . test star_test_COLON_test
-
-    BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 15
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PLUS       shift, and go to state 26
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-
-    test         go to state 476
-    or_test      go to state 71
-    and_test     go to state 72
-    not_test     go to state 73
-    comparison   go to state 74
-    expr         go to state 75
-    xor_expr     go to state 76
-    and_expr     go to state 77
-    shift_expr   go to state 78
-    arith_expr   go to state 79
-    term         go to state 80
-    factor       go to state 81
-    pick_unop    go to state 82
-    power        go to state 83
-    atom         go to state 84
-    plus_STRING  go to state 85
-    lambdef      go to state 86
-
-
-State 454
-
-  283 comp_if: IF . old_test comp_iter
-  284        | IF . old_test
-
-    BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PLUS       shift, and go to state 26
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-
-    old_test     go to state 477
-    old_lambdef  go to state 425
-    or_test      go to state 426
-    and_test     go to state 72
-    not_test     go to state 73
-    comparison   go to state 74
-    expr         go to state 75
-    xor_expr     go to state 76
-    and_expr     go to state 77
-    shift_expr   go to state 78
-    arith_expr   go to state 79
-    term         go to state 80
-    factor       go to state 81
-    pick_unop    go to state 82
-    power        go to state 83
-    atom         go to state 84
-    plus_STRING  go to state 85
-
-
-State 455
-
-  281 comp_for: FOR exprlist IN or_test comp_iter .
-
-    $default  reduce using rule 281 (comp_for)
-
-
-State 456
-
-  279 comp_iter: comp_for .
-
-    $default  reduce using rule 279 (comp_iter)
-
-
-State 457
-
-  280 comp_iter: comp_if .
-
-    $default  reduce using rule 280 (comp_iter)
-
-
-State 458
-
-  161 old_lambdef: LAMBDA COLON . old_test
-
-    BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PLUS       shift, and go to state 26
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-
-    old_test     go to state 478
-    old_lambdef  go to state 425
-    or_test      go to state 426
-    and_test     go to state 72
-    not_test     go to state 73
-    comparison   go to state 74
-    expr         go to state 75
-    xor_expr     go to state 76
-    and_expr     go to state 77
-    shift_expr   go to state 78
-    arith_expr   go to state 79
-    term         go to state 80
-    factor       go to state 81
-    pick_unop    go to state 82
-    power        go to state 83
-    atom         go to state 84
-    plus_STRING  go to state 85
-
-
-State 459
-
-  160 old_lambdef: LAMBDA varargslist . COLON old_test
-
-    COLON  shift, and go to state 479
-
-
-State 460
-
-  277 list_if: IF . old_test list_iter
-  278        | IF . old_test
-
-    BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PLUS       shift, and go to state 26
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-
-    old_test     go to state 480
-    old_lambdef  go to state 425
-    or_test      go to state 426
-    and_test     go to state 72
-    not_test     go to state 73
-    comparison   go to state 74
-    expr         go to state 75
-    xor_expr     go to state 76
-    and_expr     go to state 77
-    shift_expr   go to state 78
-    arith_expr   go to state 79
-    term         go to state 80
-    factor       go to state 81
-    pick_unop    go to state 82
-    power        go to state 83
-    atom         go to state 84
-    plus_STRING  go to state 85
-
-
-State 461
-
-  275 list_for: FOR exprlist IN testlist_safe list_iter .
-
-    $default  reduce using rule 275 (list_for)
-
-
-State 462
-
-  273 list_iter: list_for .
-
-    $default  reduce using rule 273 (list_iter)
-
-
-State 463
-
-  274 list_iter: list_if .
-
-    $default  reduce using rule 274 (list_iter)
-
-
-State 464
-
-  314 plus_COMMA_old_test: COMMA . old_test plus_COMMA_old_test
-  315                    | COMMA . old_test COMMA
-  316                    | COMMA . old_test
-
-    BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PLUS       shift, and go to state 26
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-
-    old_test     go to state 481
-    old_lambdef  go to state 425
-    or_test      go to state 426
-    and_test     go to state 72
-    not_test     go to state 73
-    comparison   go to state 74
-    expr         go to state 75
-    xor_expr     go to state 76
-    and_expr     go to state 77
-    shift_expr   go to state 78
-    arith_expr   go to state 79
-    term         go to state 80
-    factor       go to state 81
-    pick_unop    go to state 82
-    power        go to state 83
-    atom         go to state 84
-    plus_STRING  go to state 85
-
-
-State 465
-
-  156 testlist_safe: old_test plus_COMMA_old_test .
-
-    $default  reduce using rule 156 (testlist_safe)
-
-
-State 466
-
-  150 opt_AS_COMMA: pick_AS_COMMA test .
-
-    $default  reduce using rule 150 (opt_AS_COMMA)
-
-
-State 467
-
-  137 opt_ELSE: ELSE COLON suite .
-
-    $default  reduce using rule 137 (opt_ELSE)
-
-
 State 468
 
-  139 opt_FINALLY: FINALLY COLON . suite
+  135 plus_except: except_clause COLON suite plus_except .
+
+    $default  reduce using rule 135 (plus_except)
+
+
+State 469
+
+  129 while_stmt: WHILE test COLON suite ELSE COLON suite .
+
+    $default  reduce using rule 129 (while_stmt)
+
+
+State 470
+
+  319 arglist_postlist: argument COMMA arglist_postlist .
+
+    $default  reduce using rule 319 (arglist_postlist)
+
+
+State 471
+
+  249 sliceop: COLON test .
+
+    $default  reduce using rule 249 (sliceop)
+
+
+State 472
+
+  131 for_stmt: FOR exprlist IN testlist COLON suite ELSE COLON . suite
 
     ASSERT     shift, and go to state 1
     BACKQUOTE  shift, and go to state 3
@@ -8237,107 +8246,7 @@ State 468
     yield_expr     go to state 90
 
 
-State 469
-
-  135 plus_except: except_clause COLON suite plus_except .
-
-    $default  reduce using rule 135 (plus_except)
-
-
-State 470
-
-  129 while_stmt: WHILE test COLON suite ELSE COLON suite .
-
-    $default  reduce using rule 129 (while_stmt)
-
-
-State 471
-
-  319 arglist_postlist: argument COMMA arglist_postlist .
-
-    $default  reduce using rule 319 (arglist_postlist)
-
-
-State 472
-
-  249 sliceop: COLON test .
-
-    $default  reduce using rule 249 (sliceop)
-
-
 State 473
-
-  131 for_stmt: FOR exprlist IN testlist COLON suite ELSE COLON . suite
-
-    ASSERT     shift, and go to state 1
-    BACKQUOTE  shift, and go to state 3
-    BREAK      shift, and go to state 4
-    CONTINUE   shift, and go to state 6
-    DEL        shift, and go to state 8
-    EXEC       shift, and go to state 9
-    FROM       shift, and go to state 11
-    GLOBAL     shift, and go to state 12
-    IMPORT     shift, and go to state 14
-    LAMBDA     shift, and go to state 15
-    LBRACE     shift, and go to state 16
-    LPAR       shift, and go to state 17
-    LSQB       shift, and go to state 18
-    MINUS      shift, and go to state 19
-    NAME       shift, and go to state 91
-    NEWLINE    shift, and go to state 249
-    NOT        shift, and go to state 22
-    NUMBER     shift, and go to state 23
-    FLOAT      shift, and go to state 24
-    PASS       shift, and go to state 25
-    PLUS       shift, and go to state 26
-    PRINT      shift, and go to state 27
-    RAISE      shift, and go to state 28
-    RETURN     shift, and go to state 29
-    STRING     shift, and go to state 30
-    TILDE      shift, and go to state 31
-    YIELD      shift, and go to state 35
-
-    simple_stmt    go to state 250
-    small_stmt     go to state 47
-    expr_stmt      go to state 48
-    print_stmt     go to state 49
-    del_stmt       go to state 50
-    pass_stmt      go to state 51
-    flow_stmt      go to state 52
-    break_stmt     go to state 53
-    continue_stmt  go to state 54
-    return_stmt    go to state 55
-    yield_stmt     go to state 56
-    raise_stmt     go to state 57
-    import_stmt    go to state 58
-    import_name    go to state 59
-    import_from    go to state 60
-    global_stmt    go to state 61
-    exec_stmt      go to state 62
-    assert_stmt    go to state 63
-    suite          go to state 483
-    test           go to state 70
-    or_test        go to state 71
-    and_test       go to state 72
-    not_test       go to state 73
-    comparison     go to state 74
-    expr           go to state 75
-    xor_expr       go to state 76
-    and_expr       go to state 77
-    shift_expr     go to state 78
-    arith_expr     go to state 79
-    term           go to state 80
-    factor         go to state 81
-    pick_unop      go to state 82
-    power          go to state 83
-    atom           go to state 84
-    plus_STRING    go to state 85
-    lambdef        go to state 86
-    testlist       go to state 87
-    yield_expr     go to state 90
-
-
-State 474
 
   127 star_ELIF: ELIF test COLON suite . star_ELIF
 
@@ -8345,17 +8254,17 @@ State 474
 
     $default  reduce using rule 128 (star_ELIF)
 
-    star_ELIF  go to state 484
+    star_ELIF  go to state 483
 
 
-State 475
+State 474
 
   125 if_stmt: IF test COLON suite star_ELIF ELSE COLON suite .
 
     $default  reduce using rule 125 (if_stmt)
 
 
-State 476
+State 475
 
   302 star_test_COLON_test: COMMA test COLON test . star_test_COLON_test
 
@@ -8363,37 +8272,37 @@ State 476
 
     $default  reduce using rule 304 (star_test_COLON_test)
 
-    star_test_COLON_test  go to state 485
+    star_test_COLON_test  go to state 484
 
 
-State 477
+State 476
 
   283 comp_if: IF old_test . comp_iter
   284        | IF old_test .
 
     FOR  shift, and go to state 233
-    IF   shift, and go to state 454
+    IF   shift, and go to state 453
 
     $default  reduce using rule 284 (comp_if)
 
-    comp_iter  go to state 486
-    comp_for   go to state 456
-    comp_if    go to state 457
+    comp_iter  go to state 485
+    comp_for   go to state 455
+    comp_if    go to state 456
 
 
-State 478
+State 477
 
   161 old_lambdef: LAMBDA COLON old_test .
 
     $default  reduce using rule 161 (old_lambdef)
 
 
-State 479
+State 478
 
   160 old_lambdef: LAMBDA varargslist COLON . old_test
 
     BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
+    LAMBDA     shift, and go to state 421
     LBRACE     shift, and go to state 16
     LPAR       shift, and go to state 17
     LSQB       shift, and go to state 18
@@ -8406,9 +8315,9 @@ State 479
     STRING     shift, and go to state 30
     TILDE      shift, and go to state 31
 
-    old_test     go to state 487
-    old_lambdef  go to state 425
-    or_test      go to state 426
+    old_test     go to state 486
+    old_lambdef  go to state 424
+    or_test      go to state 425
     and_test     go to state 72
     not_test     go to state 73
     comparison   go to state 74
@@ -8425,84 +8334,84 @@ State 479
     plus_STRING  go to state 85
 
 
-State 480
+State 479
 
   277 list_if: IF old_test . list_iter
   278        | IF old_test .
 
     FOR  shift, and go to state 241
-    IF   shift, and go to state 460
+    IF   shift, and go to state 459
 
     $default  reduce using rule 278 (list_if)
 
-    list_iter  go to state 488
-    list_for   go to state 462
-    list_if    go to state 463
+    list_iter  go to state 487
+    list_for   go to state 461
+    list_if    go to state 462
 
 
-State 481
+State 480
 
   314 plus_COMMA_old_test: COMMA old_test . plus_COMMA_old_test
   315                    | COMMA old_test . COMMA
   316                    | COMMA old_test .
 
-    COMMA  shift, and go to state 489
+    COMMA  shift, and go to state 488
 
     $default  reduce using rule 316 (plus_COMMA_old_test)
 
-    plus_COMMA_old_test  go to state 490
+    plus_COMMA_old_test  go to state 489
 
 
-State 482
+State 481
 
   139 opt_FINALLY: FINALLY COLON suite .
 
     $default  reduce using rule 139 (opt_FINALLY)
 
 
-State 483
+State 482
 
   131 for_stmt: FOR exprlist IN testlist COLON suite ELSE COLON suite .
 
     $default  reduce using rule 131 (for_stmt)
 
 
-State 484
+State 483
 
   127 star_ELIF: ELIF test COLON suite star_ELIF .
 
     $default  reduce using rule 127 (star_ELIF)
 
 
-State 485
+State 484
 
   302 star_test_COLON_test: COMMA test COLON test star_test_COLON_test .
 
     $default  reduce using rule 302 (star_test_COLON_test)
 
 
-State 486
+State 485
 
   283 comp_if: IF old_test comp_iter .
 
     $default  reduce using rule 283 (comp_if)
 
 
-State 487
+State 486
 
   160 old_lambdef: LAMBDA varargslist COLON old_test .
 
     $default  reduce using rule 160 (old_lambdef)
 
 
-State 488
+State 487
 
   277 list_if: IF old_test list_iter .
 
     $default  reduce using rule 277 (list_if)
 
 
-State 489
+State 488
 
   314 plus_COMMA_old_test: COMMA . old_test plus_COMMA_old_test
   315                    | COMMA . old_test COMMA
@@ -8510,7 +8419,7 @@ State 489
   316                    | COMMA . old_test
 
     BACKQUOTE  shift, and go to state 3
-    LAMBDA     shift, and go to state 422
+    LAMBDA     shift, and go to state 421
     LBRACE     shift, and go to state 16
     LPAR       shift, and go to state 17
     LSQB       shift, and go to state 18
@@ -8525,9 +8434,9 @@ State 489
 
     $default  reduce using rule 315 (plus_COMMA_old_test)
 
-    old_test     go to state 481
-    old_lambdef  go to state 425
-    or_test      go to state 426
+    old_test     go to state 480
+    old_lambdef  go to state 424
+    or_test      go to state 425
     and_test     go to state 72
     not_test     go to state 73
     comparison   go to state 74
@@ -8544,7 +8453,7 @@ State 489
     plus_STRING  go to state 85
 
 
-State 490
+State 489
 
   314 plus_COMMA_old_test: COMMA old_test plus_COMMA_old_test .
 

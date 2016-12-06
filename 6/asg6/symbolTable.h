@@ -50,6 +50,11 @@ public:
         return instance;
     }
 
+    ~SymbolTableManager(){
+        for(int i = 0; i < (int)stm.size(); i++) 
+            delete stm[i];
+    }
+
     int getScopeLevel()const { return curScope; }
 
     SymbolTable* getScope() { return stm[curScope]; }
@@ -67,6 +72,7 @@ public:
             std::cerr << "can't pop scope" << std::endl;
             return;
         }
+        delete stm.back();
         stm.pop_back(); 
         curScope--;
     }

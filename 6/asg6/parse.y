@@ -101,6 +101,8 @@ funcdef // Used in: decorated, compound_stmt
         std::string str = std::string($2);
         delete $2; 
         $6->setLabel(str);        
+        /*std::cout << "function name = " << str << " type = " << $6->getType()<< std::endl;*/
+        
         if(level ==0){
             SymbolTableManager::getInstance().getScope()->addSymbol(str, $6);
         }
@@ -202,10 +204,7 @@ expr_stmt // Used in: small_stmt
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
-        if($2==NULL) {
-            $$ = $1;
-        }
-        else{
+        if($2!=NULL) {
             $$ = new AssignNode($1, $2);
             if(level == 0){
                 SymbolTableManager::getInstance().getScope()->addSymbol($1->getLabel(), $2);
@@ -414,16 +413,18 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt,
       // try_stmt, plus_except, opt_ELSE, opt_FINALLY, with_stmt, classdef
 	: simple_stmt
 	| NEWLINE INDENT plus_stmt DEDENT{
-        reverse($3->begin(), $3->end());
         $$ = new SuiteNode($3);
     }
 	;
 plus_stmt // Used in: suite, plus_stmt
-	: stmt plus_stmt { 
-        $2->push_back($1);  
-        $$ = $2;
+	: plus_stmt stmt { 
+        std::cout << $2->getType() << std::endl;
+        $1->push_back($2);  
+        $$ = $1;
     }
-	| stmt { $$ = new std::vector<Ast*>{$1}; }
+	| %empty{ 
+        $$ = new std::vector<Ast*>; 
+    }
 	;
 testlist_safe // Used in: list_for
 	: old_test plus_COMMA_old_test
