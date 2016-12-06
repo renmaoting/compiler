@@ -16,13 +16,12 @@ class SymbolTable
 {
 public:
     ~SymbolTable(){ 
-    //    for(auto val: table)
-            //delete val.second;
+        for(auto val: table)
+            delete val.second;
     }
 
     void addSymbol(std::string str, Ast* ast)
     {
-    //    if(table.count(str) && table[str]) delete table[str];
         table[str] = ast;
     }
 
@@ -32,12 +31,6 @@ public:
     }
 
     int getSize()const  { return table.size();  }
-
-    void deleteSymbol(std::string str, bool ifFree = true){
-        if(table.count(str)==0) return;
-        /*if(ifFree==true) delete table[str];
-        table.erase(str);*/
-    }
 
 private:
     std::unordered_map<std::string, Ast*> table;
@@ -92,7 +85,6 @@ public:
             std::cerr << "can't pop scope" << std::endl;
             return;
         }
-//        delete stm.back();
         stm.pop_back(); 
         curScope--;
     }
