@@ -14,8 +14,8 @@
 class AddNode:public Ast{
 public:
     AddNode(Ast* l, Ast* r): Ast("+", l, r) {
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ 
@@ -26,8 +26,8 @@ public:
 class MinusNode:public Ast{
 public:
     MinusNode(Ast* l, Ast* r): Ast("-", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -38,11 +38,13 @@ public:
 class MulNode:public Ast{
 public:
     MulNode(Ast* l, Ast* r): Ast("*", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ 
+        /*std::cout << Ast::getLeft()->getType() << " " << Ast::getLeft()->getValueType() << std::endl;
+        std::cout << Ast::getRight()->getType() << " " << Ast::getRight()->getValueType() << std::endl;*/
         return Ast::getLeft()->getVal() * Ast::getRight()->getVal(); 
     }
 };
@@ -50,8 +52,8 @@ public:
 class DividNode:public Ast{
 public:
     DividNode(Ast* l, Ast* r): Ast("/", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -60,7 +62,7 @@ public:
             std::cerr << "denominator should not be 0" << std::endl; 
             exit(0);
         } 
-        if(Ast::getType()=='I') return floor(left/right); 
+        if(Ast::getValueType()=='I') return floor(left/right); 
         return left/right; 
     }
 };
@@ -68,8 +70,8 @@ public:
 class DoubleDividNode:public Ast{
 public:
     DoubleDividNode(Ast*l, Ast* r): Ast("//", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -84,8 +86,8 @@ public:
 class PercentNode:public Ast{
 public:
     PercentNode(Ast* l, Ast* r): Ast("/", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ 
@@ -98,12 +100,35 @@ public:
     }
 };
 
+// this node store an integer or double number
+class NumberNode:public Ast{ // type = 'I' or 'D'
+public:
+    NumberNode(double val, char type): Ast("", NULL, NULL), value(val){
+        Ast::setType(type);
+        Ast::setValueType(type);
+        std::ostringstream os;
+        os << val;
+        Ast::setLabel(os.str());
+    }
+
+    void setLabel(std::string label) { Ast::setLabel(label); }
+
+    double getVal(){ 
+        return value; 
+    }
+
+    void setVal(double val) { value = val; }
+private:
+    double value;
+};
+
+
 // this node store an exponent expression
 class ExponentNode:public Ast{
 public:
     ExponentNode(Ast* l, Ast* r): Ast("**", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ return pow(Ast::getLeft()->getVal() , Ast::getRight()->getVal()); }
@@ -112,8 +137,8 @@ public:
 class PlusEqualNode:public Ast{
 public:
     PlusEqualNode(Ast* l, Ast* r): Ast("+=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ 
@@ -123,7 +148,11 @@ public:
             exit(0);
         }
         Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
-        node->setVal(node->getVal() + right->getVal());
+        double ans = node->getVal() + right->getVal();
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1;
     }
 };
@@ -131,8 +160,8 @@ public:
 class MinusEqualNode:public Ast{
 public:
     MinusEqualNode(Ast* l, Ast* r): Ast("-=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -142,7 +171,11 @@ public:
             exit(0);
         }
         Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
-        node->setVal(node->getVal() - right->getVal());
+        double ans = node->getVal() - right->getVal();
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1;
     }
 };
@@ -150,8 +183,8 @@ public:
 class StarEqualNode:public Ast{
 public:
     StarEqualNode(Ast* l, Ast* r): Ast("*=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -161,7 +194,11 @@ public:
             exit(0);
         }
         Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
-        node->setVal(node->getVal() * right->getVal());
+        double ans = node->getVal() * right->getVal();
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1;
     }
 };
@@ -169,8 +206,8 @@ public:
 class SlashEqualNode:public Ast{
 public:
     SlashEqualNode(Ast* l, Ast* r): Ast("/=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -179,13 +216,17 @@ public:
             std::cerr << "Not lvalue" << std::endl;
             exit(0);
         }
-        Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
         double rightvalue = right->getVal();
         if(rightvalue == 0){
             std::cerr << "denominator should not be 0" << std::endl;
             exit(0);
         }
-        node->setVal(node->getVal() / rightvalue);
+        Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        double ans = t=='D'?(node->getVal() / rightvalue):floor(node->getVal()/rightvalue);
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1; 
     }
 };
@@ -193,8 +234,8 @@ public:
 class PercentEqualNode:public Ast{
 public:
     PercentEqualNode(Ast* l, Ast* r): Ast("%=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -205,7 +246,11 @@ public:
         }
         Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
         double leftValue = node->getVal(), rightValue = right->getVal();
-        node->setVal(leftValue-rightValue*floor(leftValue/rightValue));
+        double ans = leftValue-rightValue*floor(leftValue/rightValue);
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1;
     }
 };
@@ -213,8 +258,8 @@ public:
 class DoubleSlashEqualNode:public Ast{
 public:
     DoubleSlashEqualNode(Ast* l, Ast* r):Ast("//=", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D'||Ast::getRight()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){
@@ -224,7 +269,11 @@ public:
             exit(0);
         }
         Ast* node = SymbolTableManager::getInstance().getAstNode(left->getLabel());
-        node->setVal(floor(node->getVal()/right->getVal()));
+        double ans = floor(node->getVal()/right->getVal());
+        char t = (left->getValueType()=='D'||right->getValueType()=='D')?'D':'I';
+        Ast* tem = new NumberNode(ans, t);
+        SymbolTableManager::getInstance().addSymbol(left->getLabel(), tem);
+        if(node->isGlobal()) SymbolTableManager::getInstance().getScope(0)->addSymbol(left->getLabel(), tem);
         return -1;
     }
 };
@@ -233,8 +282,8 @@ public:
 class SingleMinusNode:public Ast{
 public:
     SingleMinusNode(Ast* l, Ast* r): Ast("-", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ return -Ast::getLeft()->getVal(); }
@@ -244,36 +293,11 @@ public:
 class SinglePlusNode:public Ast{
 public:
     SinglePlusNode(Ast* l, Ast* r): Ast("+", l, r){
-        int flag = (Ast::getLeft()->getType() == 'D'||Ast::getRight()->getType() == 'D')?0:1;
-        flag? Ast::setType('I'): Ast::setType('D');
+        int flag = (Ast::getLeft()->getValueType() == 'D')?0:1;
+        flag? Ast::setValueType('I'): Ast::setValueType('D');
     }
 
     double getVal(){ return Ast::getLeft()->getVal(); }
-};
-
-// this node store an integer or double number
-class NumberNode:public Ast{ // type = 'I' or 'D'
-public:
-    NumberNode(double val, char type): Ast("", NULL, NULL), value(val){
-        Ast::setType(type);
-        std::ostringstream os;
-        os << val;
-        Ast::setLabel(os.str());
-    }
-
-    void setLabel(std::string label) { Ast::setLabel(label); }
-
-    double getVal(){ 
-        if(Ast::getType()=='S'){
-            std::cerr << "undefined symbol" << std::endl;
-            exit(0);
-        }
-        return value; 
-    }
-
-    void setVal(double val) { value = val; }
-private:
-    double value;
 };
 
 class PrintNode:public Ast{ // type = 'P'
@@ -285,7 +309,7 @@ public:
     double getVal(){
         double val = node->getVal();
         std::cout << std::setprecision(12);
-        if(node->getType()=='D' && val == (int)val){
+        if(node->getValueType()=='D' && val == (int)val){
         std::cout << val << ".0" << std::endl;
         }
         else std::cout << val << std::endl;
@@ -303,6 +327,7 @@ public:
     }
 
     double getVal(){
+        Ast::setValueType(node->getValueType());
         return node->getVal();
     }
 
@@ -318,6 +343,7 @@ public:
 
     double getVal(){
         Ast::getRight()->getVal();
+        /*std::cout << Ast::getRight()->getValueType() << std::endl;*/
         SymbolTableManager::getInstance().addSymbol(Ast::getLeft()->getLabel(), Ast::getRight());
         return -1;
     }
@@ -337,7 +363,10 @@ public:
             }
             (*vec)[i]->getVal();
         }
-        if(vec->back() && vec->back()->getType() == 'R') return vec->back()->getVal();
+        if(vec->back() && vec->back()->getType() == 'R'){
+            Ast::setValueType(vec->back()->getValueType());  
+            return vec->back()->getVal();
+        }
         return -1;
     }
 
@@ -352,11 +381,7 @@ public:
     }
 
     double getVal(){
-        Ast* node = SymbolTableManager::getInstance().getScope()->getAstNode(Ast::getLabel());
-        if(!node){
-            std::cerr << "No such a function!" << std::endl;
-            exit(0);
-        }
+        Ast* node = SymbolTableManager::getInstance().getAstNode(Ast::getLabel());
         SymbolTableManager::getInstance().insertScope();
         double val = node->getVal(); 
         SymbolTableManager::getInstance().popScope();
@@ -370,8 +395,14 @@ public:
         Ast::setType('S');
     }
 
+    char getValueType(){
+        Ast* node = SymbolTableManager::getInstance().getAstNode(Ast::getLabel());
+        return node->getValueType(); 
+    }
+
     double getVal(){
         Ast* node = SymbolTableManager::getInstance().getAstNode(Ast::getLabel());
+        /*std::cout << Ast::getLabel() << " " << node->getValueType() << std::endl;*/
         return node->getVal();
     }
 };
@@ -385,10 +416,10 @@ public:
     
     double getVal(){
         for(auto str: vec){
-            /*Ast* node1 = SymbolTableManager::getInstance().getScope()->getAstNode(str);
+            Ast* node1 = SymbolTableManager::getInstance().getScope()->getAstNode(str);
             Ast* node2 = SymbolTableManager::getInstance().getScope(0)->getAstNode(str);
             if(node1 && node2){
-                SymbolTableManager::getInstance().getScope()->addSymbol(str, node2);
+                SymbolTableManager::getInstance().getScope(0)->addSymbol(str, node1);
             }
             else if(node1) {
                 SymbolTableManager::getInstance().getScope(0)->addSymbol(str, node1); 
@@ -397,10 +428,11 @@ public:
                 SymbolTableManager::getInstance().getScope()->addSymbol(str, node2);
             }
             else {
-                Ast* newAst = new NumberNode(0, 'I');
+                Ast* newAst = new NumberNode(-1, 'I');
                 SymbolTableManager::getInstance().getScope(0)->addSymbol(str, newAst);
                 SymbolTableManager::getInstance().getScope()->addSymbol(str, newAst);
-            }*/
+            }
+            SymbolTableManager::getInstance().getAstNode(str)->setGlobal(true);
         } 
         return -1;
     }

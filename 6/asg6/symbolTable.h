@@ -16,13 +16,13 @@ class SymbolTable
 {
 public:
     ~SymbolTable(){ 
-        for(auto val: table)
-            delete val.second;
+    //    for(auto val: table)
+            //delete val.second;
     }
 
     void addSymbol(std::string str, Ast* ast)
     {
-        if(table.count(str) && table[str]) delete table[str];
+    //    if(table.count(str) && table[str]) delete table[str];
         table[str] = ast;
     }
 
@@ -35,8 +35,8 @@ public:
 
     void deleteSymbol(std::string str, bool ifFree = true){
         if(table.count(str)==0) return;
-        if(ifFree==true) delete table[str];
-        table.erase(str);
+        /*if(ifFree==true) delete table[str];
+        table.erase(str);*/
     }
 
 private:
@@ -53,8 +53,8 @@ public:
     }
 
     ~SymbolTableManager(){
-        for(int i = 0; i < (int)stm.size(); i++) 
-            delete stm[i];
+        //for(int i = 0; i < (int)stm.size(); i++) 
+            //delete stm[i];
     }
 
     int getScopeLevel()const { return curScope; }
@@ -92,7 +92,7 @@ public:
             std::cerr << "can't pop scope" << std::endl;
             return;
         }
-        delete stm.back();
+//        delete stm.back();
         stm.pop_back(); 
         curScope--;
     }

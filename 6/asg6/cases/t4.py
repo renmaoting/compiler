@@ -1,11 +1,12 @@
 x = 1
 def f():
     x = 9
-    print x
+    def g():
+        x=3
+        print x
     global x
     x += 1
     return x
-
 print f()
 print f()
 print x

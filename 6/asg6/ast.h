@@ -17,8 +17,8 @@ extern void yyerror(const char*, const char);
 
 class Ast {
 public:
-  Ast(): type('0'), mLabel(""), left(NULL), right(NULL) {}
-  Ast(std::string label, Ast* l, Ast* r) :type('0'), mLabel(label), left(l), right(r) {}
+  Ast(): type('0'), mLabel(""), left(NULL), right(NULL), valueType('0'), global(false){}
+  Ast(std::string label, Ast* l, Ast* r) :type('0'), mLabel(label), left(l), right(r),valueType('0') {}
   virtual ~Ast() { if(left) delete left; if(right) delete right; }
   Ast* getLeft() const { return left; }
   void setLeft(Ast* l) { left = l; }
@@ -28,15 +28,21 @@ public:
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
   virtual void setLabel(std::string label) { mLabel = label; }
   virtual void addName(std::string ) { throw std::string("Havn't override this function "); }
+  bool isGlobal() { return global; }
+  void setGlobal(bool st) { global = st; }
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }
   char getType() const { return type; }
+  virtual void setValueType(char t) { valueType = t; }
+  virtual char getValueType(){ return valueType; }
 
 private:
   char type;// integer, double or string
   std::string mLabel;
   Ast *left;
   Ast *right;
+  char valueType;
+  bool global;
 };
 
 #endif

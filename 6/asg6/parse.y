@@ -10,6 +10,7 @@
 	extern int yylineno;
 	extern char *yytext;
     int level = 0;
+    int ifExeFunc= 0;// decide where to exe func
 	void yyerror (char const *);
 %}
 
@@ -221,8 +222,9 @@ augassign // Used in: expr_stmt
 	| DOUBLESLASHEQUAL { $$ = DOUBLESLASHEQUAL; }
 	;
 print_stmt // Used in: small_stmt
-	: PRINT opt_test {
-        $$ = new PrintNode($2);
+	: PRINT {ifExeFunc++; } opt_test {
+        ifExeFunc--;
+        $$ = new PrintNode($3);
         if(level==0) {
             $$->getVal();
         }
@@ -520,16 +522,13 @@ term // Used in: arith_expr, term
                 $$ = new MulNode($1, $3);
                 break;
             case SLASH:
-                if($3==0 || $1 == 0) $$ = 0;
-                else $$ = new DividNode($1, $3); 
+                $$ = new DividNode($1, $3); 
                 break;
             case PERCENT:
-                if($3==0 || $1 == 0) $$ = 0;
-                else $$ =  new PercentNode($1, $3); 
+                $$ = new PercentNode($1, $3); 
                 break;
             case DOUBLESLASH:
-                if($3==0 || $1 == 0) $$ = 0;
-                else $$ = new DoubleDividNode($1, $3); 
+                $$ = new DoubleDividNode($1, $3); 
                 break;
             default: break;
         }
@@ -562,7 +561,7 @@ power // Used in: factor
 	| atom star_trailer { 
         if($2 != NULL) {
             $$ = new FuncNode($1->getLabel());
-            if(level == 0){
+            if(level == 0 && ifExeFunc==0){
                 $$->getVal();
             }
         }
@@ -584,7 +583,7 @@ atom // Used in: power
         $$ = new StringNode(str);
     }
 	| NUMBER { $$ = new NumberNode($1, 'I'); }
-	| FLOAT { $$ = new NumberNode($1, 'D'); }
+	| FLOAT { $$ = new NumberNode($1, 'D');  }
 	| plus_STRING {}
 	;
 pick_yield_expr_testlist_comp // Used in: opt_yield_test
