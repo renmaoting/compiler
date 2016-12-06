@@ -27,6 +27,7 @@ public:
   virtual double getVal() { throw std::string("No Number"); }
   virtual void setVal(double) { throw std::string("No Number To Be Set"); }
   virtual void setLabel(std::string label) { mLabel = label; }
+  virtual void addName(std::string ) { throw std::string("Havn't override this function "); }
   std::string getLabel() { return mLabel; }
   void setType(char t) { type = t; }
   char getType() const { return type; }

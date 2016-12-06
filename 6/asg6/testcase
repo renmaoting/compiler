@@ -1,6 +1,8 @@
 def f():
     def g():
-        globle x = 10
+        x = 1984
+        y = 10
+        x *= y
         print x
         return x+99999
     print g()

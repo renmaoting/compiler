@@ -22,12 +22,8 @@ public:
 
     void addSymbol(std::string str, Ast* ast)
     {
-        if(table.count(str)) delete table[str];
+        if(table.count(str) && table[str]) delete table[str];
         table[str] = ast;
-    }
-
-    bool ifExist(std::string str){
-        return table.count(str);
     }
 
     Ast* getAstNode(std::string str){
@@ -36,6 +32,12 @@ public:
     }
 
     int getSize()const  { return table.size();  }
+
+    void deleteSymbol(std::string str, bool ifFree = true){
+        if(table.count(str)==0) return;
+        if(ifFree==true) delete table[str];
+        table.erase(str);
+    }
 
 private:
     std::unordered_map<std::string, Ast*> table;
@@ -60,6 +62,24 @@ public:
     SymbolTable* getScope() { return stm[curScope]; }
 
     SymbolTable* getScope(int cnt) { return stm[cnt]; }
+
+    void addSymbol(std::string str, Ast* node){
+        getInstance().stm[curScope]->addSymbol(str, node);
+    }
+
+    Ast* getAstNode(std::string str){
+        int cur = curScope;
+        while(cur >= 0){
+            if(getInstance().stm[cur]->getAstNode(str))
+                break;
+            cur--;
+        }
+        if(cur < 0){ 
+            std::cerr << "can't find this symbol in symbol table!" << std::endl;
+            exit(0);
+        }
+        return getInstance().stm[cur]->getAstNode(str);
+    }
 
     void insertScope() { 
         SymbolTable *newST = new SymbolTable();

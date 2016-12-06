@@ -102,7 +102,7 @@ funcdef // Used in: decorated, compound_stmt
         delete $2; 
         $6->setLabel(str);        
         if(level ==0){
-            SymbolTableManager::getInstance().getScope()->addSymbol(str, $6);
+            SymbolTableManager::getInstance().addSymbol(str, $6);
         }
         $$ = $6;
     }
@@ -159,54 +159,41 @@ small_stmt // Used in: simple_stmt, small_stmt_STAR_OR_SEMI
 expr_stmt // Used in: small_stmt
 	: testlist augassign pick_yield_expr_testlist // +=, -=, /=, %=, |= ..
     {
-        // firstly get the ast node from SymbolTable, then get the type and value of this two number
-        char leftType = $1->getType(), rightType = $3->getType();
-        int flag = (leftType=='D'||rightType=='D')?1:0;
-        flag?$1->setType('D'):$1->setType('I');
-        double leftValue = $1->getVal(), rightValue = $3->getVal();            
-
         switch($2){
             case PLUSEQUAL: // +=
-                leftValue += rightValue;
+                $$ = new PlusEqualNode($1, $3); 
                 break; 
 
             case MINEQUAL: // -=
-                leftValue -= rightValue;
+                $$ = new MinusEqualNode($1, $3); 
                 break;
 
             case STAREQUAL: // *=
-                leftValue *= rightValue;
+                $$ = new StarEqualNode($1, $3); 
                 break;
 
             case SLASHEQUAL: // /=
-                if(rightValue ==0){
-                    std::cerr << "denominator should not be 0" << std::endl;
-                    exit(0);
-                }
-                leftValue /= rightValue;
+                $$ = new SlashEqualNode($1, $3); 
                 break;
 
             case PERCENTEQUAL: // %=
-                leftValue = leftValue-rightValue*floor(leftValue/rightValue);
+                $$ = new PercentEqualNode($1, $3); 
                 break;
 
             case DOUBLESLASHEQUAL: // //=
-                $1->setType('I');
-                leftValue = floor(leftValue/rightValue); 
+                $$ = new DoubleSlashEqualNode($1, $3); 
                 break;
 
             default: break;
         }    
-        if(flag==0)
-            $1->setVal((int)leftValue); 
-        else $1->setVal(leftValue);
+        if(level==0) $$->getVal();
     }
 	| testlist star_EQUAL // add symbols to symbol table
     { 
         if($2!=NULL) {
             $$ = new AssignNode($1, $2);
             if(level == 0){
-                SymbolTableManager::getInstance().getScope()->addSymbol($1->getLabel(), $2);
+                SymbolTableManager::getInstance().addSymbol($1->getLabel(), $2);
             }
         }
     }
@@ -236,7 +223,11 @@ augassign // Used in: expr_stmt
 print_stmt // Used in: small_stmt
 	: PRINT opt_test {
         $$ = new PrintNode($2);
-        if(level==0) $$->getVal();
+        if(level==0) {
+            std::cout << "call global print" << std::endl;
+            std::cout << $$->getLabel() << std::endl;
+            $$->getVal();
+        }
     }
 	| PRINT RIGHTSHIFT test opt_test_2 {}
 	;
@@ -330,9 +321,17 @@ dotted_name // Used in: decorator, import_from, dotted_as_name, dotted_name
 	| dotted_name DOT NAME
 	;
 global_stmt // Used in: small_stmt, global_stmt
-	: global_stmt COMMA NAME
-	| GLOBAL NAME { //todo; 
-    
+	: global_stmt COMMA NAME{
+        std::string str = std::string($3);
+        delete $3; 
+        $1->addName(str);
+        $$ = $1;
+    }
+	| GLOBAL NAME {  
+        std::string str = std::string($2);
+        delete $2; 
+        $$ = new GlobalNode("global"); 
+        $$->addName(str);
     }
 	;
 exec_stmt // Used in: small_stmt
