@@ -207,11 +207,9 @@ class SuiteNode:public Ast{ // type = 'F'
 public:
     SuiteNode(std::vector<Ast*>* v):Ast("", NULL, NULL), vec(v) {
         Ast::setType('F');
-        std::cout << "set type F" << std::endl;
     }
 
     double getVal(){
-        std::cout << vec->size() << std::endl;
         for(int i = 0; i < (int)vec->size(); i++){// evalue each statement in function
             if((*vec)[i]->getType()=='F'){  //if this is a function define, just add this function name into curent scope
                 SymbolTableManager::getInstance().getScope()->addSymbol((*vec)[i]->getLabel(), (*vec)[i]);
@@ -219,8 +217,7 @@ public:
             }
             (*vec)[i]->getVal();
         }
-        if(vec->back() && vec->back()->getType() == 'R')
-            return SymbolTableManager::getInstance().getScope()->getAstNode(vec->back()->getLabel())->getVal();            
+        if(vec->back() && vec->back()->getType() == 'R') return vec->back()->getVal();
         return -1;
     }
 
@@ -235,6 +232,7 @@ public:
     }
 
     double getVal(){
+        std::cout << "function call node" << std::endl;
         Ast* node = SymbolTableManager::getInstance().getScope()->getAstNode(Ast::getLabel());
         if(!node){
             std::cerr << "No such a function!" << std::endl;

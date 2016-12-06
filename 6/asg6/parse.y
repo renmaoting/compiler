@@ -42,12 +42,12 @@
 %type <ast> lambdef pick_yield_expr_testlist star_EQUAL testlist yield_expr suite simple_stmt NEWLINE
 %type <ast> small_stmt small_stmt_STAR_OR_SEMI print_stmt pass_stmt del_stmt flow_stmt import_stmt
 %type <ast> global_stmt exec_stmt stmt raise_stmt return_stmt break_stmt continue_stmt compound_stmt
-%type <ast> expr_stmt assert_stmt while_stmt if_stmt exprlist try_stmt with_stmt yield_stmt star_trailer 
+%type <ast> expr_stmt assert_stmt while_stmt if_stmt exprlist try_stmt with_stmt yield_stmt star_trailer funcdef 
 %type <vec> plus_stmt 
 %type <i> NUMBER pick_PLUS_MINUS pick_multop pick_unop PLUS SLASH PERCENT TILDE MINUS LEFTSHIFT RIGHTSHIFT
 %type <i> augassign PLUSEQUAL MINEQUAL STAREQUAL PERCENTEQUAL AMPEREQUAL VBAREQUAL CIRCUMFLEXEQUAL LEFTSHIFTEQUAL 
 %type <i> DOUBLESTAREQUAL DOUBLESLASHEQUAL SLASHEQUAL RIGHTSHIFTEQUAL NOT AND
-%type <i> PASS DEF DEL RETURN RAISE SEMI TRY WHILE funcdef 
+%type <i> PASS DEF DEL RETURN RAISE SEMI TRY WHILE 
 %type <d> FLOAT 
 %type <c> NAME
 
@@ -101,11 +101,10 @@ funcdef // Used in: decorated, compound_stmt
         std::string str = std::string($2);
         delete $2; 
         $6->setLabel(str);        
-        /*std::cout << "function name = " << str << " type = " << $6->getType()<< std::endl;*/
-        
         if(level ==0){
             SymbolTableManager::getInstance().getScope()->addSymbol(str, $6);
         }
+        $$ = $6;
     }
 	;
 parameters // Used in: funcdef
@@ -418,7 +417,6 @@ suite // Used in: funcdef, if_stmt, star_ELIF, while_stmt, for_stmt,
 	;
 plus_stmt // Used in: suite, plus_stmt
 	: plus_stmt stmt { 
-        std::cout << $2->getType() << std::endl;
         $1->push_back($2);  
         $$ = $1;
     }
@@ -571,6 +569,7 @@ power // Used in: factor
                 $$->getVal();
             }
         }
+        else $$ = $1;
     }
 	;
 star_trailer // Used in: power, star_trailer
